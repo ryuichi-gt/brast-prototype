@@ -65,10 +65,10 @@ src/
 - **アクセシビリティ**: キーボードフォーカス可視、`prefers-reduced-motion` 尊重、`localStorage` 不使用。
 - **色の意味付け**: teal = AIの自律/ライブ、amber = 人間の判断が必要、を全画面で厳守。
 
-## 要確認（未確定の仕様）
+## 確定済みの仕様メモ
 
-- **スコアしきい値**: 議事録では「90点」、mockup では「95」。暫定で **95** を採用
-  （`src/data/config.ts` の `SCORE_THRESHOLD` 一箇所で変更可能）。確定したら同定数と `CLAUDE.md` §4 を更新。
+- **スコアしきい値**: **90 / 100** で確定（2026-06-21 岡本さん。議事録の発言準拠）。
+  実装は `src/data/config.ts` の `SCORE_THRESHOLD` に集約（変更は一箇所）。`CLAUDE.md` §4 も同値に更新済み。
 
 ## Phase 2（DIGITRAN）へ引き継ぐべき項目
 

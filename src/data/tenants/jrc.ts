@@ -30,7 +30,7 @@ export const jrc: TenantBundle = {
         state: "done",
         subs: ["AIライティング検知", "法務・景表法", "レピュテーション", "IR・専門"],
       },
-      { key: "score", n: "スコアリング", d: "95点しきい値で人間レビュー要否を判定", meta: "平均 94 / 100", state: "done" },
+      { key: "score", n: "スコアリング", d: "90点しきい値で人間レビュー要否を判定", meta: "平均 94 / 100", state: "done" },
       { key: "you", n: "あなたのレビュー", d: "プレゼンを承認、または該当工程へ差し戻し", meta: "判断待ち", state: "you" },
       { key: "dist", n: "配信", d: "承認後、各チャネルへ自動／手動で配信", meta: "承認後に起動", state: "pending" },
     ],
@@ -151,7 +151,7 @@ export const jrc: TenantBundle = {
         ],
       },
       plan: {
-        lead: "戦略に紐づく今週の具体物です。各記事は <b>生成 → 4体レビュー → スコアリング</b> を通過済み。スコア95以上は基本そのまま、未満はあなたの確認を推奨します。",
+        lead: "戦略に紐づく今週の具体物です。各記事は <b>生成 → 4体レビュー → スコアリング</b> を通過済み。スコア90以上は基本そのまま、未満はあなたの確認を推奨します。",
         pieces: [
           { title: "医療IT制度改定で何が変わるか — 実装担当者向け要点整理", channels: ["オウンド", "LinkedIn"], score: 97, status: "pass", statusLabel: "97 通過", track: "キャンペーン" },
           { title: "改定対応で見落とされがちな「保守・運用」の論点", channels: ["オウンド"], score: 96, status: "pass", statusLabel: "96 通過", track: "キャンペーン" },

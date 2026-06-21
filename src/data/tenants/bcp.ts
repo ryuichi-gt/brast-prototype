@@ -30,7 +30,7 @@ export const bcp: TenantBundle = {
         state: "done",
         subs: ["AIライティング検知", "法務・景表法", "レピュテーション", "IR・専門"],
       },
-      { key: "score", n: "スコアリング", d: "95点しきい値で人間レビュー要否を判定", meta: "平均 91 / 100", state: "done" },
+      { key: "score", n: "スコアリング", d: "90点しきい値で人間レビュー要否を判定", meta: "平均 91 / 100", state: "done" },
       { key: "you", n: "あなたのレビュー", d: "プレゼンを承認、または該当工程へ差し戻し", meta: "判断待ち", state: "you" },
       { key: "dist", n: "配信", d: "承認後、各チャネルへ自動／手動で配信", meta: "承認後に起動", state: "pending" },
     ],

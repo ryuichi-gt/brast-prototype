@@ -31,7 +31,7 @@ export const sympafit: TenantBundle = {
         state: "done",
         subs: ["AIライティング検知", "法務・薬機法", "レピュテーション", "科学的根拠"],
       },
-      { key: "score", n: "スコアリング", d: "95点しきい値で人間レビュー要否を判定", meta: "平均 96 / 100", state: "done" },
+      { key: "score", n: "スコアリング", d: "90点しきい値で人間レビュー要否を判定", meta: "平均 96 / 100", state: "done" },
       { key: "you", n: "あなたのレビュー", d: "プレゼンを承認、または該当工程へ差し戻し", meta: "判断待ち", state: "you" },
       { key: "dist", n: "配信", d: "承認後、各チャネルへ自動／手動で配信", meta: "承認後に起動", state: "pending" },
     ],
@@ -50,7 +50,7 @@ export const sympafit: TenantBundle = {
         kpis: [
           { v: "6", unit: "本", l: "生成済みコンテンツ", d: "▲ 先週 +1", dTone: "up" },
           { v: "3", unit: "ch", l: "配信チャネル", d: "自動3 / 手動0" },
-          { v: "96", unit: "/100", l: "平均審査スコア", d: "全件しきい値超", dTone: "up" },
+          { v: "96", unit: "/100", l: "平均審査スコア", d: "1本がしきい値未満", dTone: "warn" },
           { v: "~52", unit: "k", l: "想定リーチ（週）", d: "▲ +14%", dTone: "up" },
         ],
         tracks: [
@@ -122,7 +122,7 @@ export const sympafit: TenantBundle = {
           { title: "CGMデータの基本的な見方（入門）", channels: ["main", "X"], score: 96, status: "pass", statusLabel: "96 通過", track: "定常" },
           { title: "femtech：ホルモン周期と血糖の関係", channels: ["femtech"], score: 95, status: "pass", statusLabel: "95 通過", track: "定常" },
           { title: "夏季トレーニング期の登録キャンペーン告知", channels: ["X", "athlete"], score: 94, status: "pass", statusLabel: "94 通過", track: "キャンペーン" },
-          { title: "研究レビュー：運動と代謝 vol.2", channels: ["main"], score: 90, status: "review", statusLabel: "90 要確認", track: "定常" },
+          { title: "研究レビュー：運動と代謝 vol.2", channels: ["main"], score: 89, status: "review", statusLabel: "89 要確認", track: "定常" },
         ],
       },
       schedule: {
@@ -172,7 +172,7 @@ export const sympafit: TenantBundle = {
     upcoming: [
       { title: "持久運動時の血糖変動を科学的に読み解く", channels: ["main", "athlete"], meta: "98 通過 · 火 09:00 配信予定", badge: "hot" },
       { title: "アスリートのための補給タイミング設計", channels: ["athlete"], meta: "96 通過 · 水 09:00 配信予定" },
-      { title: "研究レビュー：運動と代謝 vol.2", channels: ["main"], meta: "90 要確認 · 配信保留", badge: "review" },
+      { title: "研究レビュー：運動と代謝 vol.2", channels: ["main"], meta: "89 要確認 · 配信保留", badge: "review" },
     ],
     published: [
       { title: "CGMデータの基本的な見方（入門）", channels: ["main", "X"], meta: "6/12 配信 · リーチ 14k" },
