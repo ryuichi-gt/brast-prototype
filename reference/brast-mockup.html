@@ -1,0 +1,1141 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>BRAST — Brand Strategy OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BRAST — Brand Strategy OS
+   Concept: "The Briefing Room"
+   A dark situation-room console (the desk) on which a warm
+   paper presentation deck floats. The AI is an autonomous
+   media operator that presents a weekly strategy briefing
+   to you, its supervisor. Color encodes the human/AI boundary:
+     teal   = the AI's autonomous / live work
+     amber  = where YOUR decision is required
+   ============================================================ */
+
+:root{
+  /* situation-room ink */
+  --ink:#0C111B;
+  --ink-1:#101724;
+  --ink-2:#141E2E;
+  --ink-3:#1B2839;
+  --line:#26344A;
+  --line-soft:#1d2a3c;
+
+  /* warm paper deck */
+  --paper:#F6F2E9;
+  --paper-2:#FBF8F1;
+  --paper-line:#E2DACB;
+  --paper-ink:#1A1E26;
+  --paper-mut:#6A6F7B;
+  --paper-faint:#9aa0ab;
+
+  /* signals */
+  --signal:#46CBBE;     /* AI / live / automated */
+  --signal-dim:#2a8a82;
+  --amber:#E6A53B;      /* needs your decision */
+  --amber-deep:#c9892a;
+  --rose:#E0775F;       /* risk / flagged */
+  --ok:#5FB97E;         /* approved / live */
+
+  /* text on dark */
+  --t-hi:#EEF2F8;
+  --t-md:#A5AEBF;
+  --t-lo:#6C7689;
+
+  --r:14px;
+  --r-sm:9px;
+  --rail:236px;
+  --pipe:300px;
+
+  --shadow-deck:0 28px 60px -22px rgba(0,0,0,.66), 0 4px 14px -6px rgba(0,0,0,.5);
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --disp:"Space Grotesk","Noto Sans JP",sans-serif;
+  --jp:"Noto Sans JP","Space Grotesk",sans-serif;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family:var(--jp);
+  background:
+    radial-gradient(1200px 700px at 78% -8%, rgba(70,203,190,.07), transparent 60%),
+    radial-gradient(900px 600px at 8% 110%, rgba(230,165,59,.05), transparent 55%),
+    var(--ink);
+  color:var(--t-hi);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  font-size:14px;
+  line-height:1.55;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--signal);outline-offset:2px;border-radius:6px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eye{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--t-lo)}
+.pipehead .t svg,.opsbox .row svg,.crumb svg,.viewcfg svg{width:14px;height:14px;flex:none}
+
+/* ---------- App shell ---------- */
+.app{
+  display:grid;
+  grid-template-columns:var(--rail) 1fr;
+  min-height:100vh;
+}
+
+/* ---------- Left rail ---------- */
+.rail{
+  background:linear-gradient(180deg,var(--ink-1),var(--ink));
+  border-right:1px solid var(--line-soft);
+  display:flex;flex-direction:column;
+  padding:18px 14px;
+  gap:6px;
+  position:sticky;top:0;height:100vh;overflow:auto;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 14px}
+.brand .mark{
+  width:30px;height:30px;border-radius:9px;flex:none;
+  background:conic-gradient(from 210deg,var(--signal),#7fe4d9 40%,var(--amber) 75%,var(--signal));
+  position:relative;
+  box-shadow:0 0 0 1px rgba(255,255,255,.08) inset, 0 6px 16px -6px rgba(70,203,190,.6);
+}
+.brand .mark::after{content:"";position:absolute;inset:6px;border-radius:5px;background:var(--ink-1)}
+.brand .mark::before{content:"";position:absolute;left:50%;top:50%;width:6px;height:6px;border-radius:50%;background:var(--signal);transform:translate(-50%,-50%);box-shadow:0 0 10px 2px var(--signal)}
+.brand .name{font-family:var(--disp);font-weight:700;letter-spacing:.16em;font-size:15px}
+.brand .sub{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--t-lo);margin-top:-2px}
+
+.tenant{
+  background:var(--ink-2);border:1px solid var(--line);border-radius:11px;
+  padding:9px 10px;margin-bottom:8px;cursor:pointer;position:relative;
+}
+.tenant:hover{border-color:var(--signal-dim)}
+.tenant .tlabel{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--t-lo)}
+.tenant .tname{font-weight:700;font-size:13px;margin-top:2px;position:relative;padding-right:18px;line-height:1.3}
+.tenant .tname svg{position:absolute;right:0;top:3px;width:14px;height:14px;color:var(--t-lo)}
+.chips{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.chip{
+  font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;
+  padding:3px 8px;border-radius:20px;border:1px solid var(--line);
+  color:var(--t-md);background:#0e1622;
+}
+.chip.on{background:rgba(70,203,190,.13);border-color:var(--signal-dim);color:#bdeee8}
+
+.navlabel{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--t-lo);padding:14px 8px 6px}
+.nav{display:flex;flex-direction:column;gap:2px;overflow:auto;min-height:0}
+.nav button{
+  display:flex;align-items:center;gap:11px;
+  padding:9px 11px;border-radius:10px;color:var(--t-md);
+  font-size:13.5px;font-weight:500;text-align:left;width:100%;
+  transition:background .15s,color .15s;
+}
+.nav button svg{width:17px;height:17px;flex:none;opacity:.85}
+.nav button:hover{background:var(--ink-2);color:var(--t-hi)}
+.nav button.active{background:linear-gradient(90deg,rgba(70,203,190,.16),rgba(70,203,190,.02));color:#fff}
+.nav button.active svg{color:var(--signal);opacity:1}
+.nav button .badge{margin-left:auto;font-family:var(--mono);font-size:9.5px;background:var(--amber);color:#1c1303;padding:1px 6px;border-radius:9px;font-weight:600}
+.nav .sep{height:1px;background:var(--line-soft);margin:8px 6px}
+
+.railfoot{margin-top:auto;padding-top:12px}
+.opsbox{background:var(--ink-2);border:1px solid var(--line);border-radius:11px;padding:10px 11px}
+.opsbox .row{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--t-md)}
+.opsbox .row + .row{margin-top:7px}
+.live{width:7px;height:7px;border-radius:50%;background:var(--signal);box-shadow:0 0 0 0 rgba(70,203,190,.6);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(70,203,190,.5)}70%{box-shadow:0 0 0 7px rgba(70,203,190,0)}100%{box-shadow:0 0 0 0 rgba(70,203,190,0)}}
+
+/* ---------- Main ---------- */
+.main{display:flex;flex-direction:column;min-width:0}
+.topbar{
+  display:flex;align-items:center;gap:16px;
+  padding:14px 26px;border-bottom:1px solid var(--line-soft);
+  background:linear-gradient(180deg,rgba(16,23,36,.96),rgba(12,17,27,.9));
+  backdrop-filter:blur(6px);flex:none;
+  position:sticky;top:0;z-index:30;
+}
+.crumb{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t-md)}
+.crumb b{color:var(--t-hi);font-weight:700}
+.crumb .slash{color:var(--t-lo)}
+.topbar .grow{flex:1}
+.weekpill{
+  display:flex;align-items:center;gap:9px;padding:6px 13px;border-radius:30px;
+  background:var(--ink-2);border:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--t-md)
+}
+.weekpill b{color:var(--t-hi)}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 16px;border-radius:10px;font-weight:600;font-size:13px;
+  transition:transform .1s, filter .15s, background .15s;
+}
+.btn:active{transform:translateY(1px)}
+.btn-amber{background:linear-gradient(180deg,#efb352,var(--amber));color:#221703;box-shadow:0 8px 20px -8px rgba(230,165,59,.6)}
+.btn-amber:hover{filter:brightness(1.05)}
+.btn-ghost{border:1px solid var(--line);color:var(--t-md)}
+.btn-ghost:hover{border-color:var(--signal-dim);color:var(--t-hi)}
+.btn-teal{background:rgba(70,203,190,.14);border:1px solid var(--signal-dim);color:#bdeee8}
+.btn-teal:hover{background:rgba(70,203,190,.22)}
+
+.scroll{min-width:0}
+.view{display:none}
+.view.show{display:block}
+
+/* =======================================================
+   BRIEFING — the hero: paper deck on the dark desk
+   ======================================================= */
+.briefing{
+  display:grid;
+  grid-template-columns:1fr var(--pipe);
+  gap:0;align-items:start;
+}
+.deckwrap{
+  padding:26px 30px 22px;display:flex;flex-direction:column;
+}
+.deckhead{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.deckhead h1{
+  font-family:var(--disp);font-weight:700;font-size:19px;letter-spacing:.01em;margin:0;
+  display:flex;align-items:baseline;gap:11px;
+}
+.deckhead h1 .jp{font-family:var(--jp)}
+.aitag{
+  display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.08em;padding:5px 11px;border-radius:30px;
+  background:rgba(70,203,190,.1);border:1px solid var(--signal-dim);color:#a7e9e1;
+}
+.aitag .dot{width:6px;height:6px;border-radius:50%;background:var(--signal);box-shadow:0 0 8px var(--signal)}
+
+/* the deck (paper) */
+.deck{
+  background:var(--paper);
+  color:var(--paper-ink);
+  border-radius:16px;
+  box-shadow:var(--shadow-deck);
+  position:relative;overflow:hidden;
+  min-height:clamp(440px,58vh,640px);
+  display:flex;flex-direction:column;
+  background-image:radial-gradient(rgba(0,0,0,.018) 1px,transparent 1px);
+  background-size:4px 4px;
+}
+.deck::before{ /* warm top sheen + binding edge */
+  content:"";position:absolute;left:0;top:0;bottom:0;width:5px;
+  background:linear-gradient(180deg,var(--signal),var(--amber));opacity:.85;
+}
+.slide{position:relative;padding:34px 40px 38px;display:none;flex-direction:column}
+.slide.show{display:flex;flex:1 1 auto;animation:slidein .35s cubic-bezier(.2,.7,.2,1)}
+@keyframes slidein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.slide .skicker{display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.slide .snum{font-family:var(--mono);font-size:11px;color:var(--paper-faint);letter-spacing:.1em}
+.slide .seye{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--signal-dim);font-weight:600}
+.slide h2{font-size:25px;font-weight:900;line-height:1.25;margin:0 0 4px;letter-spacing:-.01em;color:#15181f;max-width:34ch}
+.slide .lead{font-size:15px;color:#3a3f49;max-width:62ch;margin:6px 0 18px;line-height:1.7}
+.slide .lead b{color:#15181f}
+.flagwrap{position:absolute;top:26px;right:30px;display:flex;gap:8px}
+.flagbtn{
+  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;
+  padding:6px 12px;border-radius:9px;border:1px solid var(--paper-line);color:var(--paper-mut);background:#fff;
+}
+.flagbtn:hover{border-color:var(--amber);color:var(--amber-deep)}
+.flagbtn.flagged{background:rgba(230,165,59,.13);border-color:var(--amber);color:var(--amber-deep)}
+.slide .own{position:absolute;bottom:18px;right:32px;font-family:var(--mono);font-size:10px;color:var(--paper-faint);letter-spacing:.04em}
+.slide .own b{color:var(--signal-dim)}
+
+/* summary slide */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:8px 0 22px}
+.kpi{background:var(--paper-2);border:1px solid var(--paper-line);border-radius:12px;padding:15px 16px}
+.kpi .v{font-family:var(--disp);font-weight:700;font-size:27px;line-height:1;color:#15181f}
+.kpi .v small{font-size:13px;color:var(--paper-mut);font-weight:500;margin-left:3px}
+.kpi .l{font-size:11.5px;color:var(--paper-mut);margin-top:7px}
+.kpi .d{font-family:var(--mono);font-size:10px;margin-top:4px}
+.kpi .d.up{color:#2f9c5d}.kpi .d.warn{color:var(--amber-deep)}
+
+.tracks{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:auto}
+.track{border:1px solid var(--paper-line);border-radius:12px;padding:16px 17px;background:#fff;position:relative;overflow:hidden}
+.track::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+.track.steady::before{background:var(--signal)}
+.track.camp::before{background:var(--amber)}
+.track .tt{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.track .tt .tag{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:2px 7px;border-radius:20px}
+.track.steady .tt .tag{background:rgba(70,203,190,.14);color:var(--signal-dim)}
+.track.camp .tt .tag{background:rgba(230,165,59,.16);color:var(--amber-deep)}
+.track p{font-size:12.5px;color:#4a505b;margin:8px 0 0;line-height:1.6}
+.track .meta{display:flex;gap:14px;margin-top:11px;font-family:var(--mono);font-size:10.5px;color:var(--paper-mut)}
+.track .meta b{color:#15181f}
+
+/* reasoning chain (strategy slide) */
+.reason{display:flex;flex-direction:column;gap:0;margin:4px 0 0}
+.rnode{display:grid;grid-template-columns:148px 1fr;gap:16px;padding:13px 0;border-top:1px solid var(--paper-line);align-items:start}
+.rnode:first-child{border-top:none}
+.rnode .who{display:flex;align-items:center;gap:9px}
+.rnode .who .ag{width:9px;height:9px;border-radius:2px;background:var(--signal);transform:rotate(45deg);flex:none}
+.rnode .who .nm{font-weight:700;font-size:12.5px}
+.rnode .who .role{font-family:var(--mono);font-size:9.5px;color:var(--paper-faint)}
+.rnode .says{font-size:13px;color:#3a3f49;line-height:1.65}
+.rnode.synth{background:linear-gradient(90deg,rgba(230,165,59,.08),transparent);border-radius:10px;padding:14px 12px;border-top:none;margin-top:4px}
+.rnode.synth .who .ag{background:var(--amber);border-radius:50%;transform:none}
+.rnode.synth .says{color:#2a2e36;font-weight:500}
+
+/* trend signals (market slide) */
+.signals{display:flex;flex-direction:column;gap:10px}
+.sig{display:grid;grid-template-columns:46px 1fr auto;gap:15px;align-items:center;border:1px solid var(--paper-line);border-radius:11px;padding:12px 15px;background:#fff}
+.sig .score{font-family:var(--disp);font-weight:700;font-size:20px;text-align:center;color:var(--signal-dim);line-height:1}
+.sig .score small{display:block;font-size:8px;font-family:var(--mono);color:var(--paper-faint);font-weight:400;letter-spacing:.1em}
+.sig .body .h{font-weight:700;font-size:13.5px;color:#15181f}
+.sig .body .src{font-family:var(--mono);font-size:10px;color:var(--paper-faint);margin-top:3px}
+.sig .delta{font-family:var(--mono);font-size:12px;color:#2f9c5d;font-weight:600;white-space:nowrap}
+.sig .delta.hot{color:var(--rose)}
+.sigfoot{display:flex;align-items:center;gap:8px;margin-top:14px;font-size:11.5px;color:var(--paper-mut)}
+.sigfoot .live{background:var(--signal-dim)}
+
+/* knowledge slide */
+.kgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+.kcard{border:1px solid var(--paper-line);border-radius:11px;padding:13px 15px;background:#fff}
+.kcard .kh{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:13px}
+.kcard .kst{font-family:var(--mono);font-size:9.5px;padding:2px 8px;border-radius:20px}
+.kst.fresh{background:rgba(95,185,126,.16);color:#2f9c5d}
+.kst.stale{background:rgba(230,165,59,.16);color:var(--amber-deep)}
+.kcard ul{margin:9px 0 0;padding-left:16px;font-size:12px;color:#4a505b;line-height:1.7}
+.kcard li::marker{color:var(--signal-dim)}
+
+/* media plan slide -> list of pieces */
+.pieces{display:flex;flex-direction:column;gap:9px}
+.piece{display:grid;grid-template-columns:1fr auto;gap:12px;border:1px solid var(--paper-line);border-radius:11px;padding:12px 15px;background:#fff;align-items:center}
+.piece .pl .pt{font-weight:700;font-size:13.5px;color:#15181f}
+.piece .pl .pm{display:flex;gap:9px;margin-top:5px;font-family:var(--mono);font-size:10px;color:var(--paper-mut);flex-wrap:wrap}
+.piece .pl .pm .ch{padding:1px 7px;border-radius:20px;border:1px solid var(--paper-line)}
+.piece .pr{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.scorepill{font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 9px;border-radius:8px}
+.scorepill.pass{background:rgba(95,185,126,.15);color:#2f9c5d}
+.scorepill.review{background:rgba(230,165,59,.16);color:var(--amber-deep)}
+.scorepill.gen{background:rgba(70,203,190,.14);color:var(--signal-dim)}
+.verbadge{font-family:var(--mono);font-size:9px;color:var(--paper-faint)}
+
+/* schedule slide */
+.cal{display:grid;grid-template-columns:96px repeat(7,1fr);border:1px solid var(--paper-line);border-radius:12px;overflow:hidden;background:#fff;font-size:11px}
+.cal .hd{background:var(--paper-2);font-family:var(--mono);font-size:10px;letter-spacing:.05em;color:var(--paper-mut);padding:9px 6px;text-align:center;border-bottom:1px solid var(--paper-line)}
+.cal .ch{background:var(--paper-2);font-weight:700;padding:9px 10px;border-bottom:1px solid var(--paper-line);border-right:1px solid var(--paper-line);color:#15181f;font-size:11px;display:flex;align-items:center;gap:6px}
+.cal .ch .auto{width:6px;height:6px;border-radius:50%;background:var(--signal)}
+.cal .ch .man{width:6px;height:6px;border-radius:50%;background:var(--amber)}
+.cal .cell{min-height:46px;border-bottom:1px solid var(--paper-line);border-right:1px solid var(--paper-line);padding:5px;display:flex;flex-direction:column;gap:3px}
+.cal .ev{font-size:9.5px;line-height:1.3;border-radius:6px;padding:4px 6px;font-weight:500}
+.cal .ev.t{background:rgba(70,203,190,.16);color:#1c6a63}
+.cal .ev.a{background:rgba(230,165,59,.2);color:var(--amber-deep)}
+.callegend{display:flex;gap:18px;margin-top:12px;font-size:11px;color:var(--paper-mut);align-items:center}
+.callegend i{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;vertical-align:middle}
+
+/* deck footer / slide rail */
+.deckrail{display:flex;align-items:center;gap:10px;padding:14px 4px 22px}
+.navarrow{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);color:var(--t-md);display:grid;place-items:center}
+.navarrow:hover{border-color:var(--signal-dim);color:var(--t-hi)}
+.dots{display:flex;gap:7px;flex:1;overflow:auto}
+.dotseg{flex:1;min-width:34px;display:flex;flex-direction:column;gap:5px;cursor:pointer;padding:2px 0}
+.dotseg .bar{height:3px;border-radius:3px;background:var(--line)}
+.dotseg.done .bar{background:var(--signal-dim)}
+.dotseg.active .bar{background:var(--signal)}
+.dotseg .lab{font-family:var(--mono);font-size:9px;color:var(--t-lo);letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dotseg.active .lab{color:var(--t-hi)}
+
+/* ---------- Pipeline rail (right) ---------- */
+.pipe{
+  border-left:1px solid var(--line-soft);background:linear-gradient(180deg,var(--ink-1),var(--ink));
+  display:flex;flex-direction:column;
+}
+.pipehead{padding:20px 20px 12px;border-bottom:1px solid var(--line-soft)}
+.pipehead .t{font-family:var(--disp);font-weight:600;font-size:14px;letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+.pipehead .s{font-size:11px;color:var(--t-lo);margin-top:3px;line-height:1.5}
+.pipeline{padding:14px 20px;position:relative}
+.pnode{display:grid;grid-template-columns:26px 1fr;gap:12px;position:relative;padding-bottom:14px}
+.pnode .gut{display:flex;flex-direction:column;align-items:center}
+.pnode .nd{width:13px;height:13px;border-radius:50%;border:2px solid var(--line);background:var(--ink-2);z-index:1;margin-top:3px;flex:none;transition:.2s}
+.pnode .ln{width:2px;flex:1;background:var(--line-soft);margin-top:2px}
+.pnode:last-child .ln{display:none}
+.pnode.done .nd{border-color:var(--signal);background:var(--signal)}
+.pnode.you .nd{border-color:var(--amber);background:var(--amber);box-shadow:0 0 0 4px rgba(230,165,59,.18)}
+.pnode.pending .nd{opacity:.6}
+.pnode .pbody .pn{font-weight:600;font-size:12.5px}
+.pnode .pbody .pd{font-size:10.5px;color:var(--t-lo);margin-top:2px;line-height:1.45}
+.pnode .pbody .pmeta{font-family:var(--mono);font-size:9.5px;color:var(--signal-dim);margin-top:4px}
+.pnode.you .pbody .pmeta{color:var(--amber)}
+.pnode.trace .nd{box-shadow:0 0 0 5px rgba(230,165,59,.22);border-color:var(--amber);background:var(--amber)}
+.pnode.trace .ln{background:linear-gradient(180deg,var(--amber),var(--line-soft))}
+.pnode.trace .pbody .pn{color:#fff}
+.subagents{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.subagents .sa{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:6px;background:var(--ink-3);border:1px solid var(--line);color:var(--t-md)}
+.subagents .sa.ok{border-color:var(--signal-dim);color:#a7e9e1}
+
+/* feedback dock */
+.dock{border-top:1px solid var(--line-soft);padding:14px 18px;background:var(--ink-1)}
+.dock .dl{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--t-lo);text-transform:uppercase}
+.dock .tracemsg{display:none;margin:9px 0;padding:10px 12px;border-radius:10px;background:rgba(230,165,59,.1);border:1px solid var(--amber-deep);font-size:12px;color:#f3d9a6;line-height:1.55}
+.dock .tracemsg.show{display:block;animation:slidein .3s}
+.dock .tracemsg b{color:#fff}
+.dockin{display:flex;gap:8px;margin-top:9px}
+.dockin input{flex:1;background:var(--ink-3);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--t-hi);font-family:var(--jp);font-size:12.5px}
+.dockin input::placeholder{color:var(--t-lo)}
+.dockin input:focus{border-color:var(--signal-dim);outline:none}
+.dockin .send{background:var(--signal);color:#062420;border-radius:10px;width:42px;display:grid;place-items:center}
+.dockin .send:hover{filter:brightness(1.06)}
+.quickfb{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.quickfb button{font-size:11px;padding:5px 10px;border-radius:8px;border:1px solid var(--line);color:var(--t-md)}
+.quickfb button:hover{border-color:var(--signal-dim);color:var(--t-hi)}
+
+/* =======================================================
+   Generic content views (other tabs)
+   ======================================================= */
+.page{padding:26px 30px 60px;max-width:1180px}
+.pagehead{margin-bottom:22px}
+.pagehead h1{font-family:var(--disp);font-weight:700;font-size:22px;margin:0 0 6px;letter-spacing:.01em}
+.pagehead p{color:var(--t-md);font-size:13.5px;max-width:74ch;margin:0;line-height:1.65}
+.sectlabel{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--t-lo);text-transform:uppercase;margin:30px 0 12px;display:flex;align-items:center;gap:10px}
+.sectlabel::after{content:"";flex:1;height:1px;background:var(--line-soft)}
+
+.cards{display:grid;gap:14px}
+.cards.c2{grid-template-columns:1fr 1fr}
+.cards.c3{grid-template-columns:repeat(3,1fr)}
+.card{background:var(--ink-1);border:1px solid var(--line-soft);border-radius:var(--r);padding:18px}
+.card:hover{border-color:var(--line)}
+.card .ch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.card .ch h3{font-size:14.5px;font-weight:700;margin:0}
+.card p{color:var(--t-md);font-size:12.5px;line-height:1.6;margin:6px 0 0}
+
+.statpill{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500}
+.statpill.live{background:rgba(95,185,126,.15);color:var(--ok);border:1px solid rgba(95,185,126,.3)}
+.statpill.auto{background:rgba(70,203,190,.13);color:var(--signal);border:1px solid var(--signal-dim)}
+.statpill.man{background:rgba(230,165,59,.14);color:var(--amber);border:1px solid var(--amber-deep)}
+.statpill.draft{background:var(--ink-3);color:var(--t-md);border:1px solid var(--line)}
+
+/* content list view */
+.content-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.col-h .ct{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px}
+.col-h .cn{font-family:var(--mono);font-size:11px;color:var(--t-lo)}
+.citem{background:var(--ink-1);border:1px solid var(--line-soft);border-radius:11px;padding:13px 15px;margin-bottom:9px}
+.citem .cih{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.citem .cit{font-weight:600;font-size:13px;line-height:1.45}
+.citem .cim{display:flex;gap:9px;margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--t-lo);flex-wrap:wrap;align-items:center}
+.citem .cim .ch{padding:1px 7px;border:1px solid var(--line);border-radius:20px}
+.versions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}
+.ver{border:1px solid var(--line);border-radius:9px;padding:10px;background:var(--ink-2)}
+.ver.new{border-color:var(--signal-dim);background:rgba(70,203,190,.06)}
+.ver .vh{display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:9.5px;color:var(--t-lo)}
+.ver.new .vh{color:var(--signal)}
+.ver p{font-size:11px;color:var(--t-md);margin:6px 0 0;line-height:1.5}
+.ver .pick{margin-top:9px;width:100%;padding:6px;border-radius:7px;font-size:11px;font-weight:600;border:1px solid var(--line);color:var(--t-md)}
+.ver.new .pick{background:var(--signal);color:#062420;border:none}
+.ver.new .pick:hover{filter:brightness(1.06)}
+
+/* channels view */
+.chan{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;background:var(--ink-1);border:1px solid var(--line-soft);border-radius:12px;padding:15px 18px;margin-bottom:11px}
+.chan .ci{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-family:var(--disp);font-weight:700;font-size:15px;flex:none}
+.chan .cn{font-weight:700;font-size:14px}
+.chan .role{font-size:12px;color:var(--t-md);margin-top:3px;line-height:1.5}
+.chan .cstats{display:flex;gap:18px;align-items:center}
+.chan .cstat{text-align:right}
+.chan .cstat .v{font-family:var(--disp);font-weight:700;font-size:16px}
+.chan .cstat .l{font-family:var(--mono);font-size:9px;color:var(--t-lo);letter-spacing:.05em}
+
+/* agents view */
+.agentrow{display:grid;grid-template-columns:34px 1fr;gap:16px;position:relative}
+.agentrow .agut{display:flex;flex-direction:column;align-items:center;padding-top:4px}
+.agentrow .ad{width:15px;height:15px;border-radius:4px;transform:rotate(45deg);flex:none}
+.agentrow .al{width:2px;flex:1;background:var(--line-soft);margin:6px 0}
+.agentrow:last-child .al{display:none}
+.agentrow .acard{background:var(--ink-1);border:1px solid var(--line-soft);border-radius:12px;padding:15px 17px;margin-bottom:14px;width:100%}
+.agentrow .acard:hover{border-color:var(--line)}
+.acard .ahead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.acard .an{font-weight:700;font-size:14px;display:flex;align-items:center;gap:9px}
+.acard .arole{font-family:var(--mono);font-size:9.5px;color:var(--t-lo);letter-spacing:.05em}
+.acard p{color:var(--t-md);font-size:12.5px;margin:8px 0 0;line-height:1.6}
+.acard .cfg{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.acard .cfg .c{font-family:var(--mono);font-size:9.5px;padding:3px 9px;border-radius:7px;background:var(--ink-3);border:1px solid var(--line);color:var(--t-md)}
+.acard .viewcfg{font-family:var(--mono);font-size:10px;color:var(--signal);margin-top:11px;display:inline-flex;align-items:center;gap:5px}
+.gate{background:linear-gradient(90deg,rgba(230,165,59,.1),transparent);border:1px solid var(--amber-deep)}
+.gate .an{color:var(--amber)}
+
+/* trends/radar view */
+.radarwrap{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:start}
+.radar{position:relative;aspect-ratio:1;background:radial-gradient(circle,rgba(70,203,190,.05),transparent 70%);border:1px solid var(--line);border-radius:50%;overflow:hidden}
+.radar .ring{position:absolute;border:1px solid var(--line-soft);border-radius:50%}
+.radar .sweep{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(70,203,190,.22),transparent 28%);animation:sweep 4.2s linear infinite}
+@keyframes sweep{to{transform:rotate(360deg)}}
+.radar .blip{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--signal);transform:translate(-50%,-50%);box-shadow:0 0 10px var(--signal)}
+.radar .blip.hot{background:var(--rose);box-shadow:0 0 12px var(--rose)}
+.radar .blip .bl{position:absolute;left:13px;top:-4px;font-family:var(--mono);font-size:9px;white-space:nowrap;color:var(--t-md)}
+.radar .cross{position:absolute;background:var(--line-soft)}
+
+.toast{
+  position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(20px);
+  background:var(--ink-3);border:1px solid var(--signal-dim);color:var(--t-hi);
+  padding:13px 20px;border-radius:12px;font-size:13px;font-weight:500;
+  box-shadow:0 18px 40px -16px rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:.35s;
+  display:flex;align-items:center;gap:11px;z-index:50;max-width:90vw;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast .ti{width:20px;height:20px;border-radius:50%;background:var(--signal);color:#062420;display:grid;place-items:center;flex:none}
+.toast.amber{border-color:var(--amber-deep)}.toast.amber .ti{background:var(--amber);color:#221703}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none !important;transition:none !important}
+}
+
+/* responsive */
+@media (max-width:1180px){
+  :root{--pipe:0px}
+  .briefing{grid-template-columns:1fr}
+  .pipe{border-left:none;border-top:1px solid var(--line-soft)}
+  .pipeline{max-width:760px}
+}
+@media (max-width:920px){
+  :root{--rail:0px}
+  .app{grid-template-columns:1fr}
+  .rail{position:static;height:auto;overflow:visible;border-right:none;border-bottom:1px solid var(--line-soft);padding:13px 14px}
+  .navlabel,.railfoot{display:none}
+  .brand{padding:2px 4px 10px}
+  .nav{flex-direction:row;flex-wrap:wrap;gap:6px}
+  .nav .sep{display:none}
+  .nav button{width:auto;padding:8px 11px;font-size:12.5px}
+  .nav button .badge{margin-left:6px}
+  .topbar{flex-wrap:wrap;gap:9px;padding:12px 14px}
+  .topbar .grow{display:none}
+  .deckwrap{padding:16px 14px 16px}
+  .slide{padding:22px 18px 30px}
+  .slide h2{font-size:20px}
+  .flagwrap{position:static;margin-bottom:10px}
+  .slide .own{position:static;text-align:right;margin-top:16px}
+  .kpis{grid-template-columns:1fr 1fr}
+  .tracks,.kgrid,.content-cols,.cards.c2,.cards.c3,.radarwrap{grid-template-columns:1fr}
+  .page{padding:20px 16px 50px}
+  .cal{font-size:9px}
+  .radar{max-width:300px;margin:0 auto}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div class="toast" id="toast"><span class="ti">✓</span><span id="toastmsg"></span></div>
+<script>
+/* ============================================================
+   BRAST — Brand Strategy OS  (interactive prototype)
+   All copy is in the product voice: the AI is an autonomous
+   media operator presenting its weekly plan to a supervisor.
+   ============================================================ */
+
+/* ---------- ICONS (inline, 1.6 stroke) ---------- */
+const I = {
+  brief:'<path d="M4 5h16M4 12h16M4 19h10"/>',
+  strat:'<path d="M3 17l5-5 4 3 8-9"/><circle cx="20" cy="6" r="0"/>',
+  radar:'<circle cx="12" cy="12" r="9"/><path d="M12 12l6-3"/><path d="M12 3v9"/>',
+  know:'<path d="M4 5a2 2 0 0 1 2-2h11v18H6a2 2 0 0 1-2-2z"/><path d="M9 7h6M9 11h6"/>',
+  content:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  chan:'<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.7 7.7 10.5 16M16.3 7.7 13.5 16"/>',
+  agent:'<rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 8V5M9 4h6"/><circle cx="9" cy="13.5" r="1"/><circle cx="15" cy="13.5" r="1"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>',
+  left:'<path d="M15 6l-6 6 6 6"/>',
+  right:'<path d="M9 6l6 6-6 6"/>',
+  send:'<path d="M4 12l16-7-7 16-2-7z"/>',
+  spark:'<path d="M12 3v6M12 15v6M3 12h6M15 12h6"/>',
+};
+const svg=(p,c='')=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="${c}">${p}</svg>`;
+
+/* ---------- DATA ---------- */
+const TENANTS=[
+  {id:'jrc',name:'JRCエンジニアリング',unit:'医療ITソリューション事業部',channels:['オウンドメディア','X','LinkedIn'],active:0},
+  {id:'sympafit',name:'SympaFit',unit:'血糖データ×アルゴリズム',channels:['main','athlete','femtech'],active:0},
+  {id:'bcp',name:'ツズリー / BCP',unit:'事業継続ソリューション',channels:['オウンドメディア','X']},
+  {id:'libero',name:'Libero',unit:'エンタープライズ開発',channels:['オウンドメディア','LinkedIn']},
+];
+
+const NAV=[
+  {id:'briefing',label:'週次ブリーフィング',icon:I.brief,badge:'要承認'},
+  {id:'strategy',label:'戦略アーカイブ',icon:I.strat},
+  {id:'trends',label:'トレンド・レーダー',icon:I.radar},
+  {id:'knowledge',label:'ブランドナレッジ',icon:I.know},
+  {sep:true},
+  {id:'content',label:'コンテンツ',icon:I.content,badge:'7'},
+  {id:'channels',label:'チャネル',icon:I.chan},
+  {id:'agents',label:'エージェント',icon:I.agent},
+];
+
+// Pipeline: the orchestration that produced this week's briefing.
+const PIPE=[
+  {key:'know', n:'ナレッジ更新', d:'自社サイト・公開資料を再走査し差分を検出', meta:'差分 3件', state:'done'},
+  {key:'trend',n:'トレンド調査', d:'制度・市場・SNSをリアルタイム収集', meta:'毎週月 06:00 自動 · ライブ', state:'done'},
+  {key:'strat',n:'戦略統合', d:'複数エージェントの結論を統合し週次戦略を決定', meta:'2エージェントを統合', state:'done'},
+  {key:'gen',  n:'コンテンツ生成', d:'戦略に基づき記事・SNS草稿を生成', meta:'7本生成', state:'done'},
+  {key:'img',  n:'画像生成', d:'各記事のキービジュアルを生成', meta:'5点生成', state:'done'},
+  {key:'review',n:'多段レビュー', d:'4体の審査エージェントが並列審査', meta:'全件通過', state:'done',
+     subs:['AIライティング検知','法務・景表法','レピュテーション','IR・専門']},
+  {key:'score',n:'スコアリング', d:'95点しきい値で人間レビュー要否を判定', meta:'平均 94 / 100', state:'done'},
+  {key:'you',  n:'あなたのレビュー', d:'プレゼンを承認、または該当工程へ差し戻し', meta:'判断待ち', state:'you'},
+  {key:'dist', n:'配信', d:'承認後、各チャネルへ自動／手動で配信', meta:'承認後に起動', state:'pending'},
+];
+
+// Weekly briefing slides for the active tenant (JRC 医療IT).
+const SLIDES=[
+  { key:'summary', eye:'Executive Summary', owner:'戦略統合', trace:'strat',
+    title:'今週は「制度改定」を軸に、定常発信＋立ち上げキャンペーンの2本立てを提案します',
+    render:summarySlide },
+  { key:'knowledge', eye:'Knowledge Status', owner:'ナレッジ更新', trace:'know',
+    title:'ベースナレッジはおおむね最新。1領域だけ更新を提案します',
+    render:knowledgeSlide },
+  { key:'trend', eye:'Market Trend', owner:'トレンド調査', trace:'trend',
+    title:'医療IT制度改定の本格議論入りが、今週の最大のトレンド信号です',
+    render:trendSlide },
+  { key:'competitor', eye:'Competitive Move', owner:'トレンド調査', trace:'trend',
+    title:'競合2社が制度改定に先んじて発信を開始。空白が閉じる前に動くべきです',
+    render:competitorSlide },
+  { key:'strategy', eye:'Strategy', owner:'戦略統合', trace:'strat',
+    title:'なぜこの戦略か — 各エージェントの結論と統合',
+    render:strategySlide },
+  { key:'plan', eye:'This Week’s Media Plan', owner:'コンテンツ生成 + 多段レビュー', trace:'gen',
+    title:'今週の具体プラン — 7本を生成済み、うち6本がしきい値通過',
+    render:planSlide },
+  { key:'schedule', eye:'Distribution', owner:'配信', trace:'dist',
+    title:'配信スケジュール — 自動連携と手動投稿を1枚で',
+    render:scheduleSlide },
+];
+
+/* ---------- STATE ---------- */
+let state={ view:'briefing', tenant:0, slide:0, flagged:{}, traceKey:null };
+
+/* ============================================================
+   SLIDE RENDERERS
+   ============================================================ */
+function summarySlide(){
+  return `
+  <p class="lead">先週比で医療IT制度改定の議論が一段進みました。<b>定常的なブランド発信</b>に加えて、改定対応を訴求する<b>立ち上げキャンペーン（1ヶ月）</b>の起動を提案します。下の2トラックを承認いただければ、今週分の配信まで自走します。</p>
+  <div class="kpis">
+    <div class="kpi"><div class="v">7<small>本</small></div><div class="l">生成済みコンテンツ</div><div class="d up">▲ 先週 +2</div></div>
+    <div class="kpi"><div class="v">3<small>ch</small></div><div class="l">配信チャネル</div><div class="d">自動2 / 手動1</div></div>
+    <div class="kpi"><div class="v">94<small>/100</small></div><div class="l">平均審査スコア</div><div class="d warn">1本がしきい値未満</div></div>
+    <div class="kpi"><div class="v">~38<small>k</small></div><div class="l">想定リーチ（週）</div><div class="d up">▲ +21%</div></div>
+  </div>
+  <div class="tracks">
+    <div class="track steady">
+      <div class="tt">定常発信 <span class="tag">継続</span></div>
+      <p>ブランドの専門性を継続的に積み上げる発信。今週は医療IT基盤の信頼性に関する解説記事を中心に。</p>
+      <div class="meta"><span>記事 <b>3本</b></span><span>SNS <b>5投稿</b></span><span>目的 <b>認知・信頼</b></span></div>
+    </div>
+    <div class="track camp">
+      <div class="tt">制度改定キャンペーン <span class="tag">新規・要承認</span></div>
+      <p>来月の医療IT制度改定を商機と捉えた1ヶ月の集中施策。問い合わせ獲得（CV）を目標に設計しています。</p>
+      <div class="meta"><span>期間 <b>4週</b></span><span>記事 <b>4本</b></span><span>目的 <b>CV・指名流入</b></span></div>
+    </div>
+  </div>`;
+}
+
+function knowledgeSlide(){
+  return `
+  <p class="lead">ブランドや会社の前提情報は、こちらが意図的に更新しない限り世の中が勝手に変えるものではありません。だから差分だけを検知してお知らせします。今週は<b>サービスラインの記述</b>に1件の更新候補があります。</p>
+  <div class="kgrid">
+    <div class="kcard"><div class="kh">会社・事業の前提 <span class="kst fresh">最新</span></div>
+      <ul><li>ミッション／バリュー：変更なし</li><li>提供価値・強み：変更なし</li><li>最終走査：3日前</li></ul></div>
+    <div class="kcard"><div class="kh">サービスライン <span class="kst stale">更新候補</span></div>
+      <ul><li>医療ITソリューション事業部のサービスサイトを新規検出</li><li>「保守・運用」の記述を反映することを提案</li><li>承認すると以降の戦略に反映されます</li></ul></div>
+    <div class="kcard"><div class="kh">ポジショニング <span class="kst fresh">最新</span></div>
+      <ul><li>エンタープライズ特化の方針：維持</li><li>比較軸（星取り表）の前提：維持</li></ul></div>
+    <div class="kcard"><div class="kh">トーン＆ボイス <span class="kst fresh">最新</span></div>
+      <ul><li>専門的・実直・誇張しない：維持</li><li>禁則表現リスト：変更なし</li></ul></div>
+  </div>`;
+}
+
+function trendSlide(){
+  return `
+  <p class="lead">ナレッジを前提に、今週<b>自動で走った調査</b>の結果です。関連度の高い順に並べています。この信号群が、次のスライドの戦略の根拠になります。</p>
+  <div class="signals">
+    ${sig(96,'医療IT制度改定が国会で本格議論入り','政府公開資料 · 業界紙3媒体','+340%','hot')}
+    ${sig(88,'医療機関のIT予算が来期増額の見通し','調査会社レポート · 2件','+62%')}
+    ${sig(74,'「電子カルテ標準化」の検索需要が上昇','検索トレンド · SNS言及','+28%')}
+    ${sig(61,'院内システムのセキュリティ事故が報道','ニュース · 1件','要監視','hot')}
+  </div>
+  <div class="sigfoot"><span class="live"></span> 毎週月曜 06:00 に自動実行。直近の調査は <b style="color:var(--paper-ink)">本日 06:00</b> 完了。</div>`;
+}
+function sig(score,h,src,delta,hot=''){
+  return `<div class="sig"><div class="score">${score}<small>RELEV</small></div>
+    <div class="body"><div class="h">${h}</div><div class="src">${src}</div></div>
+    <div class="delta ${hot}">${delta}</div></div>`;
+}
+
+function competitorSlide(){
+  return `
+  <p class="lead">同じトレンドに、競合も反応し始めています。先んじて発信し、検索・指名の<b>空白を埋める</b>のが今週の狙いです。</p>
+  <div class="signals">
+    ${sig(91,'競合A：制度改定の解説記事を2本公開','競合オウンドメディア','新規','hot')}
+    ${sig(83,'競合B：改定対応のウェビナー告知を開始','LinkedIn · プレスリリース','新規')}
+    ${sig(58,'自社：当該テーマの発信はまだゼロ','自社チャネル走査','空白','hot')}
+  </div>
+  <div class="sigfoot"><span class="live"></span> 競合調査は週1回。次回更新まで、検出した空白テーマを戦略へ自動反映します。</div>`;
+}
+
+function strategySlide(){
+  return `
+  <p class="lead">フルオートで作っていますが、<b>どう考えたか</b>は全部開示します。気に入らない結論があれば、その担当エージェントまで戻して下流だけ作り直せます。</p>
+  <div class="reason">
+    <div class="rnode"><div class="who"><span class="ag"></span><div><div class="nm">市場分析</div><div class="role">Market Agent</div></div></div>
+      <div class="says">制度改定は来月施行。議論のピークは<b>今〜2週間</b>。この窓で発信した記事が最も指名流入を取りやすい。</div></div>
+    <div class="rnode"><div class="who"><span class="ag"></span><div><div class="nm">競合分析</div><div class="role">Competitor Agent</div></div></div>
+      <div class="says">競合A・Bは解説型で先行。差別化は<b>「保守・運用まで含む実装の現実」</b>という当社の強み軸に寄せるべき。</div></div>
+    <div class="rnode synth"><div class="who"><span class="ag"></span><div><div class="nm">統合判断</div><div class="role">Strategy Orchestrator</div></div></div>
+      <div class="says">2つの結論を統合し、<b>定常発信（信頼の積み上げ）＋ 改定キャンペーン（CV獲得）</b>の2トラックを今週の戦略とする。キャンペーンは実装・運用の実体験を前面に出し、解説型の競合と差別化する。</div></div>
+  </div>`;
+}
+
+function planSlide(){
+  const piece=(t,chs,score,cls,scl,ver)=>`
+    <div class="piece"><div class="pl"><div class="pt">${t}</div>
+      <div class="pm">${chs.map(c=>`<span class="ch">${c}</span>`).join('')}${ver?`<span>${ver}</span>`:''}</div></div>
+    <div class="pr"><span class="scorepill ${cls}">${scl}</span></div></div>`;
+  return `
+  <p class="lead">戦略に紐づく今週の具体物です。各記事は <b>生成 → 4体レビュー → スコアリング</b> を通過済み。スコア95以上は基本そのまま、未満はあなたの確認を推奨します。</p>
+  <div class="pieces">
+    ${piece('医療IT制度改定で何が変わるか — 実装担当者向け要点整理',['オウンド','LinkedIn'],97,'pass','97 通過','キャンペーン')}
+    ${piece('改定対応で見落とされがちな「保守・運用」の論点',['オウンド'],96,'pass','96 通過','キャンペーン')}
+    ${piece('電子カルテ標準化の現在地（解説）',['オウンド','X'],95,'pass','95 通過','定常')}
+    ${piece('院内システムのセキュリティ、最低限の備え',['オウンド'],93,'pass','93 通過','定常')}
+    ${piece('制度改定チェックリスト（配布資料）',['オウンド','X'],95,'pass','95 通過','キャンペーン')}
+    ${piece('改定スケジュール早見表（SNS用カード）',['X','LinkedIn'],92,'pass','92 通過','キャンペーン')}
+    ${piece('当社の医療IT導入事例 vol.4',['オウンド'],88,'review','88 要確認','定常')}
+  </div>`;
+}
+
+function scheduleSlide(){
+  const days=['月','火','水','木','金','土','日'];
+  const rows=[
+    {ch:'オウンドメディア',auto:true,ev:{0:['t','制度改定の要点整理'],2:['t','標準化の現在地'],4:['t','セキュリティの備え']}},
+    {ch:'X',auto:true,ev:{1:['t','早見表カード'],3:['t','チェックリスト告知'],5:['t','記事ダイジェスト']}},
+    {ch:'LinkedIn',auto:true,ev:{0:['t','要点整理（B2B）'],3:['t','保守・運用の論点']}},
+    {ch:'PR TIMES',auto:false,ev:{2:['a','改定対応の体制を発表']}},
+  ];
+  let body=`<div class="cal"><div class="hd"></div>${days.map(d=>`<div class="hd">${d}</div>`).join('')}`;
+  rows.forEach(r=>{
+    body+=`<div class="ch"><span class="${r.auto?'auto':'man'}"></span>${r.ch}</div>`;
+    for(let i=0;i<7;i++){
+      const e=r.ev[i];
+      body+=`<div class="cell">${e?`<div class="ev ${e[0]}">${e[1]}</div>`:''}</div>`;
+    }
+  });
+  body+=`</div>`;
+  return `
+  <p class="lead">自動連携できるチャネルはそのまま配信、できないチャネル（PR TIMESなど）は<b>「ここに出してね」と指示だけ</b>出します。承認後、自動分は自走します。</p>
+  ${body}
+  <div class="callegend"><span><i style="background:var(--signal)"></i>自動連携（API）</span><span><i style="background:var(--amber)"></i>手動投稿（指示のみ）</span></div>`;
+}
+
+/* ============================================================
+   BRIEFING VIEW (hero)
+   ============================================================ */
+function briefingView(){
+  const slidesHTML=SLIDES.map((s,i)=>`
+    <div class="slide ${i===state.slide?'show':''}" data-slide="${i}">
+      <div class="flagwrap">
+        <button class="flagbtn ${state.flagged[s.key]?'flagged':''}" data-flag="${s.key}">
+          ${state.flagged[s.key]?'差し戻し中':'このスライドを直す'}
+        </button>
+      </div>
+      <div class="skicker"><span class="snum mono">${String(i+1).padStart(2,'0')} / ${String(SLIDES.length).padStart(2,'0')}</span><span class="seye">${s.eye}</span></div>
+      <h2>${s.title}</h2>
+      ${s.render()}
+      <div class="own">作成: <b>${s.owner}</b> エージェント</div>
+    </div>`).join('');
+
+  const rail=SLIDES.map((s,i)=>`
+    <div class="dotseg ${i<state.slide?'done':''} ${i===state.slide?'active':''}" data-goto="${i}">
+      <div class="bar"></div><div class="lab">${s.eye}</div></div>`).join('');
+
+  const pipe=PIPE.map((p,i)=>{
+    const isTrace=state.traceKey && traceContains(p.key);
+    let cls=p.state;
+    return `<div class="pnode ${cls} ${isTrace?'trace':''}">
+      <div class="gut"><div class="nd"></div><div class="ln"></div></div>
+      <div class="pbody"><div class="pn">${p.n}</div><div class="pd">${p.d}</div>
+        ${p.subs?`<div class="subagents">${p.subs.map(s=>`<span class="sa ok">${s}</span>`).join('')}</div>`:''}
+        <div class="pmeta">${p.meta}</div></div></div>`;
+  }).join('');
+
+  const dockMsg=state.traceKey?traceMessage(state.traceKey):'';
+
+  return `
+  <div class="briefing">
+    <div class="deckwrap">
+      <div class="deckhead">
+        <h1>週次ブリーフィング <span class="jp" style="color:var(--t-md);font-weight:500;font-size:14px">— 制度改定ウィーク</span></h1>
+        <span class="aitag"><span class="dot"></span>AIが全工程を自走 · あなたの承認待ち</span>
+      </div>
+      <div class="deck">${slidesHTML}</div>
+      <div class="deckrail">
+        <button class="navarrow" id="prev" aria-label="前へ">${svg(I.left)}</button>
+        <div class="dots">${rail}</div>
+        <button class="navarrow" id="next" aria-label="次へ">${svg(I.right)}</button>
+      </div>
+    </div>
+    <div class="pipe">
+      <div class="pipehead">
+        <div class="t">${svg(I.spark,'')}&nbsp;思考プロセス</div>
+        <div class="s">このブリーフィングを作った工程です。気になるスライドを「直す」と、原因の工程まで遡って下流だけ再実行します。</div>
+      </div>
+      <div class="pipeline">${pipe}</div>
+      <div class="dock">
+        <div class="dl">フィードバック — 部下に指示するように</div>
+        <div class="tracemsg ${state.traceKey?'show':''}" id="tracemsg">${dockMsg}</div>
+        <div class="dockin">
+          <input id="fbinput" placeholder="例：トレンドに○○も加えて戦略から作り直して" />
+          <button class="send" id="fbsend" aria-label="送信">${svg(I.send)}</button>
+        </div>
+        <div class="quickfb">
+          <button data-q="strat">戦略から作り直す</button>
+          <button data-q="trend">トレンドを再調査</button>
+          <button data-q="gen">この記事だけ再生成</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// which slide-trace maps to which downstream pipeline nodes
+const TRACE_ORDER=['know','trend','strat','gen','img','review','score','you','dist'];
+function traceContains(nodeKey){
+  if(!state.traceKey) return false;
+  const start=TRACE_ORDER.indexOf(state.traceKey);
+  const here=TRACE_ORDER.indexOf(nodeKey);
+  return here>=start && here<=TRACE_ORDER.indexOf('score');
+}
+function traceMessage(key){
+  const map={
+    know:['ナレッジ更新','ナレッジを更新すると、トレンド〜戦略〜生成まで全工程を作り直します'],
+    trend:['トレンド調査','調査をやり直し、戦略・コンテンツ・スコアまで下流6工程を再実行します'],
+    strat:['戦略統合','戦略から作り直し、生成・画像・レビュー・スコアの下流5工程を再実行します'],
+    gen:['コンテンツ生成','この記事だけ再生成し、画像・レビュー・スコアを通し直します'],
+    dist:['配信','配信のチャネル割り当て・スケジュールのみ調整します（生成はやり直しません）'],
+  };
+  const m=map[key]||map.strat;
+  return `<b>${m[0]}</b> の仕事に差し戻します。${m[1]}。<br>既に承認済みの記事は残したまま進められます。 <b style="cursor:pointer;text-decoration:underline" id="rerun">ここから再実行 ▸</b>`;
+}
+
+/* ============================================================
+   OTHER VIEWS
+   ============================================================ */
+function strategyView(){
+  const weeks=[
+    {w:'今週 · 6/16週',th:'制度改定ウィーク：定常発信＋立ち上げキャンペーン',st:'you',pieces:'7本',reach:'~38k'},
+    {w:'6/9週',th:'導入事例を軸にした信頼構築の定常発信',st:'live',pieces:'5本',reach:'31k'},
+    {w:'6/2週',th:'セキュリティ需要の高まりに合わせた解説強化',st:'live',pieces:'6本',reach:'34k'},
+    {w:'5/26週',th:'展示会連動：来場前後の指名流入を狙う',st:'live',pieces:'8本',reach:'42k'},
+  ];
+  return `<div class="page">
+    <div class="pagehead"><h1>戦略アーカイブ</h1>
+      <p>週ごとの戦略シートが積み上がります。実行済みも、これから実行するものも、同じ流れで遡れます。先週までの判断・差し戻しの癖もここに学習されていきます。</p></div>
+    <div class="sectlabel">Weekly Strategy Sheets</div>
+    <div class="cards">
+    ${weeks.map(x=>`<div class="card"><div class="ch">
+      <h3>${x.w}</h3>
+      <span class="statpill ${x.st==='you'?'man':'live'}">${x.st==='you'?'承認待ち':'実行済み'}</span></div>
+      <p>${x.th}</p>
+      <div style="display:flex;gap:20px;margin-top:13px;font-family:var(--mono);font-size:11px;color:var(--t-lo)">
+        <span>コンテンツ <b style="color:var(--t-hi)">${x.pieces}</b></span>
+        <span>リーチ <b style="color:var(--t-hi)">${x.reach}</b></span></div></div>`).join('')}
+    </div></div>`;
+}
+
+function trendsView(){
+  const blips=[
+    {x:50,y:50,hot:true,l:'制度改定 +340%'},
+    {x:68,y:38,l:'IT予算増 +62%'},
+    {x:38,y:66,l:'標準化 +28%'},
+    {x:72,y:64,hot:true,l:'セキュリティ事故'},
+    {x:30,y:40,l:'競合A 解説記事'},
+    {x:58,y:72,l:'競合B ウェビナー'},
+  ];
+  return `<div class="page">
+    <div class="pagehead"><h1>トレンド・レーダー</h1>
+      <p>ナレッジを前提に、制度・市場・SNS・競合をリアルタイムで監視します。中心に近いほど関連度・緊急度が高い信号です。ここで拾った変化が、週次戦略の根拠になります。</p></div>
+    <div class="radarwrap">
+      <div class="radar">
+        <div class="ring" style="inset:14%"></div><div class="ring" style="inset:30%"></div><div class="ring" style="inset:46%"></div>
+        <div class="cross" style="left:50%;top:0;width:1px;height:100%"></div>
+        <div class="cross" style="top:50%;left:0;height:1px;width:100%"></div>
+        <div class="sweep"></div>
+        ${blips.map(b=>`<div class="blip ${b.hot?'hot':''}" style="left:${b.x}%;top:${b.y}%"><span class="bl">${b.l}</span></div>`).join('')}
+      </div>
+      <div>
+        <div class="sectlabel" style="margin-top:0">Live Signals</div>
+        <div class="cards">
+          <div class="card"><div class="ch"><h3>制度改定が国会で本格議論入り</h3><span class="statpill auto">関連 96</span></div>
+            <p>来月施行に向けた議論のピーク。指名流入を取りやすい窓は今〜2週間。戦略の主軸として採用済み。</p></div>
+          <div class="card"><div class="ch"><h3>医療機関のIT予算が増額見通し</h3><span class="statpill auto">関連 88</span></div>
+            <p>来期の予算編成が動く。中長期の定常発信テーマとして反映。</p></div>
+          <div class="card"><div class="ch"><h3>院内システムのセキュリティ事故</h3><span class="statpill man">要監視</span></div>
+            <p>過度に煽らず、備えの実務情報として扱う方針。レピュテーション審査で表現を調整。</p></div>
+        </div>
+      </div>
+    </div></div>`;
+}
+
+function knowledgeView(){
+  const items=[
+    ['ミッション・バリュー','会社の存在意義と価値観。戦略のトーンの土台。','最新','fresh'],
+    ['提供価値・強み','「実装と保守・運用まで含む現実」という差別化軸。','最新','fresh'],
+    ['サービスライン','医療ITソリューション事業部の新サービスサイトを検出。','更新候補','stale'],
+    ['ポジショニング','エンタープライズ特化／星取り表で選ばれる前提。','最新','fresh'],
+    ['トーン＆ボイス','専門的・実直・誇張しない。禁則表現を含む。','最新','fresh'],
+    ['ターゲット／ペルソナ','医療機関のIT責任者・情シス・経営層。','最新','fresh'],
+  ];
+  return `<div class="page">
+    <div class="pagehead"><h1>ブランドナレッジ</h1>
+      <p>すべての発信の土台です。前提は勝手に変わらないので、差分があるものだけ「更新候補」として上げます。承認すると、以降のトレンド調査・戦略・生成すべてに反映されます。</p></div>
+    <div class="sectlabel">Base Knowledge</div>
+    <div class="cards c2">
+    ${items.map(x=>`<div class="card"><div class="ch"><h3>${x[0]}</h3>
+      <span class="statpill ${x[3]==='fresh'?'live':'man'}">${x[2]}</span></div><p>${x[1]}</p></div>`).join('')}
+    </div></div>`;
+}
+
+function contentView(){
+  return `<div class="page">
+    <div class="pagehead"><h1>コンテンツ</h1>
+      <p>これから配信される予定のもの／すでに配信したものが一覧で溜まります。戦略が変わった記事は、骨子を残したまま旧版と新版を並べて提示するので、どちらを出すかはあなたが選べます。</p></div>
+    <div class="content-cols">
+      <div>
+        <div class="col-h"><div class="ct"><span class="statpill auto">配信予定</span> これから出るもの</div><div class="cn">7件</div></div>
+        ${cItem('医療IT制度改定で何が変わるか — 要点整理',['オウンド','LinkedIn'],'97 通過 · 木 09:00 配信予定',true)}
+        ${cItem('「保守・運用」の見落とされがちな論点',['オウンド'],'96 通過 · 金 09:00 配信予定')}
+        ${cItem('当社の医療IT導入事例 vol.4',['オウンド'],'88 要確認 · 配信保留',false,true)}
+      </div>
+      <div>
+        <div class="col-h"><div class="ct"><span class="statpill live">配信済み</span> もう出たもの</div><div class="cn">直近</div></div>
+        ${cItem('電子カルテ標準化の現在地（解説）',['オウンド','X'],'6/12 配信 · リーチ 9.2k')}
+        ${cItem('セキュリティの最低限の備え',['オウンド'],'6/10 配信 · リーチ 6.1k')}
+        ${verItem()}
+      </div>
+    </div></div>`;
+}
+function cItem(t,chs,meta,hot=false,review=false){
+  return `<div class="citem"><div class="cih"><div class="cit">${t}</div>
+    ${hot?'<span class="statpill auto">主力</span>':review?'<span class="statpill man">要確認</span>':''}</div>
+    <div class="cim">${chs.map(c=>`<span class="ch">${c}</span>`).join('')}<span>${meta}</span></div></div>`;
+}
+function verItem(){
+  return `<div class="citem"><div class="cih"><div class="cit">展示会フォロー記事（戦略変更により再提示）</div></div>
+    <div class="cim"><span class="ch">オウンド</span><span>戦略が「制度改定」に更新されたため文脈を調整</span></div>
+    <div class="versions">
+      <div class="ver"><div class="vh"><span>旧版</span><span>v3</span></div><p>展示会の来場お礼を主軸にした文脈。骨子は維持。</p><button class="pick" data-toast="旧版を採用しました">旧版を残す</button></div>
+      <div class="ver new"><div class="vh"><span>新版</span><span>v4 · 推奨</span></div><p>制度改定の文脈を追記し、指名流入に最適化。</p><button class="pick" data-toast="新版（v4）を採用しました">新版を採用</button></div>
+    </div></div>`;
+}
+
+function channelsView(){
+  const chans=[
+    {ic:'OM',c:'var(--signal)',n:'オウンドメディア',role:'大型記事の母艦。専門性と検索流入を積み上げる中心チャネル。',auto:true,posts:'週3',reach:'18k'},
+    {ic:'X',c:'#cfd6e2',n:'X',role:'記事を小出しに展開し、日次で接点を作る。即時性の高い拡散担当。',auto:true,posts:'週5',reach:'12k'},
+    {ic:'in',c:'#7fb1ff',n:'LinkedIn',role:'B2B意思決定層への到達。実装・運用の専門性を訴求する。',auto:true,posts:'週2',reach:'8k'},
+    {ic:'PR',c:'var(--amber)',n:'PR TIMES',role:'API連携不可。AIが「ここに出してね」と指示だけ出す手動チャネル。',auto:false,posts:'随時',reach:'—'},
+  ];
+  return `<div class="page">
+    <div class="pagehead"><h1>チャネル</h1>
+      <p>複数メディアを一元管理し、それぞれの役割を可視化します。自動連携できるチャネルは承認後そのまま配信、できないチャネルは配信指示だけ出します。</p></div>
+    <div class="sectlabel">Connected Channels — 医療ITソリューション</div>
+    ${chans.map(c=>`<div class="chan">
+      <div class="ci" style="background:${c.c}1f;color:${c.c}">${c.ic}</div>
+      <div><div class="cn">${c.n} <span class="statpill ${c.auto?'auto':'man'}" style="margin-left:6px">${c.auto?'自動連携':'手動投稿'}</span></div>
+        <div class="role">${c.role}</div></div>
+      <div class="cstats">
+        <div class="cstat"><div class="v">${c.posts}</div><div class="l">頻度</div></div>
+        <div class="cstat"><div class="v">${c.reach}</div><div class="l">週リーチ</div></div></div>
+    </div>`).join('')}</div>`;
+}
+
+function agentsView(){
+  const order=[
+    {c:'var(--signal)',n:'トレンド調査',r:'Research',d:'ナレッジを前提に制度・市場・SNS・競合をリアルタイム収集。関連度でランク付けして信号化する。',cfg:['頻度: 週次 月06:00','ソース: 政府/業界紙/SNS/検索','出力: 関連度スコア']},
+    {c:'var(--signal)',n:'戦略統合',r:'Strategy Orchestrator',d:'市場・競合エージェントの結論を統合し、定常発信とキャンペーンの2トラックで週次戦略を決定する。',cfg:['統合元: 市場/競合','出力: 戦略シート','トラック: 定常 + キャンペーン']},
+    {c:'var(--signal)',n:'コンテンツ生成',r:'Content',d:'戦略に紐づけて記事・SNS草稿を生成。媒体ごとに文量とトーンを出し分ける。',cfg:['媒体別フォーマット','トーン: ナレッジ準拠','出力: 記事 / SNS / 配布資料']},
+    {c:'var(--signal)',n:'画像生成',r:'Visual',d:'各記事のキービジュアルを生成。ブランドのビジュアルトーンに準拠する。',cfg:['出力: キービジュアル','準拠: ブランドトーン']},
+    {gate:true,c:'var(--amber)',n:'多段レビュー（4体）',r:'Review Cluster',d:'4体の審査エージェントが並列で審査。1つでも基準未達なら生成工程へ戻す。',cfg:['AIライティング検知','法務・景表法','レピュテーション','IR・専門']},
+    {gate:true,c:'var(--amber)',n:'スコアリング & ゲート',r:'Score Gate',d:'審査結果を統合し95点しきい値で判定。基準超なら原則そのまま、未満はあなたのレビューを推奨。',cfg:['しきい値: 95 / 100','超過: 自動承認候補','未満: 人間レビュー推奨']},
+  ];
+  return `<div class="page">
+    <div class="pagehead"><h1>エージェント</h1>
+      <p>裏側のオーケストレーションです。構成はこちらで用意し、あなたは中身を確認できます（編集は不可、選んで使う設計）。審査ゲートを通った成果だけが、あなたのレビューに上がります。</p></div>
+    <div class="sectlabel">Orchestration Pipeline · Agent SDK</div>
+    ${order.map(a=>`<div class="agentrow">
+      <div class="agut"><div class="ad" style="background:${a.c}"></div><div class="al"></div></div>
+      <div class="acard ${a.gate?'gate':''}"><div class="ahead">
+        <div class="an" style="${a.gate?'color:var(--amber)':''}">${a.n}</div>
+        <div class="arole">${a.r}</div></div>
+        <p>${a.d}</p>
+        <div class="cfg">${a.cfg.map(c=>`<span class="c">${c}</span>`).join('')}</div>
+        <span class="viewcfg" role="button" tabindex="0" data-toast="設定の中身を表示（編集は不可）">${svg(I.chev,'')} 設定の中身を見る</span>
+      </div></div>`).join('')}
+    </div>`;
+}
+
+/* ============================================================
+   SHELL + RENDER
+   ============================================================ */
+function shell(){
+  const t=TENANTS[state.tenant];
+  const railNav=NAV.map(n=>n.sep?'<div class="sep"></div>':
+    `<button class="${state.view===n.id?'active':''}" data-nav="${n.id}">${svg(n.icon)}<span>${n.label}</span>${n.badge?`<span class="badge">${n.badge}</span>`:''}</button>`).join('');
+
+  const tenantBox=`<div class="tenant" id="tenantbtn">
+      <div class="tlabel">TENANT</div>
+      <div class="tname">${t.name} ${svg(I.chev)}</div>
+      <div style="font-size:11px;color:var(--t-lo);margin-top:1px">${t.unit}</div>
+      <div class="chips">${t.channels.map((c,i)=>`<span class="chip ${i===0?'on':''}">${c}</span>`).join('')}</div>
+    </div>`;
+
+  let body='';
+  switch(state.view){
+    case 'briefing': body=briefingView(); break;
+    case 'strategy': body=strategyView(); break;
+    case 'trends': body=trendsView(); break;
+    case 'knowledge': body=knowledgeView(); break;
+    case 'content': body=contentView(); break;
+    case 'channels': body=channelsView(); break;
+    case 'agents': body=agentsView(); break;
+  }
+  const isBrief=state.view==='briefing';
+  const topRight=isBrief
+    ? `<div class="weekpill"><span class="live" style="width:7px;height:7px;border-radius:50%;background:var(--signal)"></span>2026 W25 · <b>6/16</b> 週</div>
+       <button class="btn btn-ghost" id="topfb">差し戻す</button>
+       <button class="btn btn-amber" id="approve">このブリーフィングを承認して実行</button>`
+    : `<div class="weekpill mono">医療ITソリューション</div>`;
+
+  document.getElementById('app').innerHTML=`
+    <aside class="rail">
+      <div class="brand"><div class="mark"></div><div><div class="name">BRAST</div><div class="sub">BRAND STRATEGY OS</div></div></div>
+      ${tenantBox}
+      <div class="navlabel">OPERATIONS</div>
+      <nav class="nav">${railNav}</nav>
+      <div class="railfoot"><div class="opsbox">
+        <div class="row"><span class="live"></span> 自走モード：稼働中</div>
+        <div class="row" style="color:var(--t-lo)">${svg(I.spark,'')}&nbsp;次回ブリーフィング：来週月 06:00</div>
+        <div class="row" style="color:var(--t-lo)">Slackに日次レポート送信中</div>
+      </div></div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="crumb"><b>${t.name}</b><span class="slash">/</span>${t.unit}<span class="slash">/</span>${NAV.find(n=>n.id===state.view)?.label||''}</div>
+        <div class="grow"></div>
+        ${topRight}
+      </header>
+      <div class="scroll">${body}</div>
+    </main>`;
+  bind();
+}
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg,amber=false){
+  const el=document.getElementById('toast');
+  document.getElementById('toastmsg').textContent=msg;
+  el.classList.toggle('amber',amber);
+  el.querySelector('.ti').textContent=amber?'!':'✓';
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove('show'),2600);
+}
+
+/* ---------- bindings ---------- */
+function bind(){
+  document.querySelectorAll('[data-nav]').forEach(b=>b.onclick=()=>{state.view=b.dataset.nav;state.traceKey=null;shell();});
+
+  const tb=document.getElementById('tenantbtn');
+  if(tb) tb.onclick=()=>{ state.tenant=(state.tenant+1)%TENANTS.length; state.slide=0; toast(`テナントを「${TENANTS[state.tenant].name}」に切り替えました`); shell(); };
+
+  // toast-only affordances
+  document.querySelectorAll('[data-toast]').forEach(b=>{
+    b.onclick=()=>toast(b.dataset.toast);
+    b.onkeydown=(e)=>{if(e.key==='Enter')toast(b.dataset.toast);};
+  });
+
+  if(state.view!=='briefing') return;
+
+  // slide nav
+  const go=(i)=>{ state.slide=Math.max(0,Math.min(SLIDES.length-1,i)); renderSlides(); };
+  document.getElementById('prev').onclick=()=>go(state.slide-1);
+  document.getElementById('next').onclick=()=>go(state.slide+1);
+  document.querySelectorAll('[data-goto]').forEach(d=>d.onclick=()=>go(+d.dataset.goto));
+
+  // flag a slide -> trace back
+  document.querySelectorAll('[data-flag]').forEach(b=>b.onclick=()=>{
+    const key=b.dataset.flag;
+    const slide=SLIDES.find(s=>s.key===key);
+    state.flagged[key]=!state.flagged[key];
+    state.traceKey=state.flagged[key]?slide.trace:null;
+    shell();
+    if(state.flagged[key]){
+      toast(`「${slide.eye}」を差し戻し。原因の工程を表示しました`,true);
+      setTimeout(bindRerun,30);
+    }
+  });
+
+  // quick feedback chips
+  document.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{
+    state.traceKey=b.dataset.q; shell(); setTimeout(bindRerun,30);
+    toast('指示を受け付けました。該当工程まで遡ります',true);
+  });
+
+  // feedback text input
+  const send=()=>{
+    const v=document.getElementById('fbinput').value.trim();
+    if(!v) return;
+    // naive intent routing for the demo
+    let key='strat';
+    if(/トレンド|調査|市場|ニュース/.test(v)) key='trend';
+    else if(/ナレッジ|前提|情報更新/.test(v)) key='know';
+    else if(/記事|生成|文章|画像/.test(v)) key='gen';
+    else if(/配信|スケジュール|チャネル|投稿/.test(v)) key='dist';
+    state.traceKey=key; shell(); setTimeout(bindRerun,30);
+    toast('フィードバックを受け付け、原因工程まで遡りました',true);
+  };
+  document.getElementById('fbsend').onclick=send;
+  document.getElementById('fbinput').onkeydown=(e)=>{if(e.key==='Enter')send();};
+
+  // approve / reject in topbar
+  const ap=document.getElementById('approve');
+  if(ap) ap.onclick=()=>{
+    PIPE[7].state='done'; PIPE[7].meta='承認済み'; PIPE[8].state='done'; PIPE[8].meta='配信を起動';
+    state.traceKey=null;
+    shell();
+    toast('承認しました。今週分の配信を自動で実行します');
+  };
+  const rj=document.getElementById('topfb');
+  if(rj) rj.onclick=()=>{ document.getElementById('fbinput')?.focus(); };
+
+  bindRerun();
+}
+function bindRerun(){
+  const r=document.getElementById('rerun');
+  if(r) r.onclick=()=>{
+    const k=state.traceKey; state.traceKey=null; state.flagged={};
+    shell();
+    toast('該当工程から下流を再実行しました。新しい案をプレゼンに反映します');
+  };
+}
+
+// re-render only slide area + pipeline state without full shell rebuild
+function renderSlides(){
+  document.querySelectorAll('.slide').forEach((el)=>{
+    el.classList.toggle('show', +el.dataset.slide===state.slide);
+  });
+  document.querySelectorAll('.dotseg').forEach((el,i)=>{
+    el.classList.toggle('done', i<state.slide);
+    el.classList.toggle('active', i===state.slide);
+  });
+}
+
+/* ---------- keyboard ---------- */
+document.addEventListener('keydown',(e)=>{
+  if(state.view!=='briefing') return;
+  if(e.target.tagName==='INPUT') return;
+  if(e.key==='ArrowRight'){state.slide=Math.min(SLIDES.length-1,state.slide+1);renderSlides();}
+  if(e.key==='ArrowLeft'){state.slide=Math.max(0,state.slide-1);renderSlides();}
+});
+
+shell();
+
+</script>
+</body>
+</html>
