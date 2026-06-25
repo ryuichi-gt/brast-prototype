@@ -148,6 +148,8 @@ export interface Piece {
   status: "pass" | "review" | "gen";
   statusLabel: string;
   track?: string;
+  /** Links to a full Article body (TenantBundle.articles) for the reader. */
+  articleId?: string;
 }
 
 export interface PlanSlideData {
@@ -232,6 +234,38 @@ export interface ContentItem {
   channels: string[];
   meta: string;
   badge?: "hot" | "review";
+  /** Links to a full Article body (TenantBundle.articles) for the reader. */
+  articleId?: string;
+}
+
+/** One reviewer's verdict in the 4-agent review cluster. */
+export interface ReviewBreakdown {
+  label: string;
+  score: number;
+  note: string;
+}
+
+/** A block of article body (avoids a markdown dependency; type-safe). */
+export type ArticleBlock =
+  | { type: "h2"; text: string }
+  | { type: "p"; html: string }
+  | { type: "ul"; items: string[] }
+  | { type: "quote"; html: string };
+
+/** A full generated piece, viewable in the article reader. */
+export interface Article {
+  id: string;
+  kind: "article" | "sns" | "asset";
+  title: string;
+  dek?: string;
+  channels: string[];
+  track?: string;
+  score: number;
+  status: "pass" | "review";
+  reviews: ReviewBreakdown[];
+  keyVisual?: string;
+  body: ArticleBlock[];
+  sources?: { label: string; url: string }[];
 }
 
 export interface VersionCompare {
@@ -281,4 +315,6 @@ export interface TenantBundle {
   knowledge: KnowledgeItem[];
   content: ContentData;
   channels: ChannelsData;
+  /** Full generated pieces, keyed by id, for the article reader (optional). */
+  articles?: Record<string, Article>;
 }

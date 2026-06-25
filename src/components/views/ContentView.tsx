@@ -82,10 +82,27 @@ export function ContentView() {
 }
 
 function CItem({ item }: { item: ContentItem }) {
+  const { openArticle } = useStore();
+  const clickable = !!item.articleId;
   return (
-    <div className="citem">
+    <div
+      className={`citem${clickable ? " clickable" : ""}`}
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onClick={clickable ? () => openArticle(item.articleId!) : undefined}
+      onKeyDown={
+        clickable
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") openArticle(item.articleId!);
+            }
+          : undefined
+      }
+    >
       <div className="cih">
-        <div className="cit">{item.title}</div>
+        <div className="cit">
+          {item.title}
+          {clickable ? <span className="readcue">中身を読む ▸</span> : null}
+        </div>
         {item.badge === "hot" ? (
           <span className="statpill auto">主力</span>
         ) : item.badge === "review" ? (

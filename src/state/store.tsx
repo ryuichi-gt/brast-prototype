@@ -36,6 +36,8 @@ interface Store {
   pipeline: PipeNode[];
   messages: ChatMessage[];
   toast: ToastState | null;
+  /** Article id currently open in the reader overlay (null = closed). */
+  openArticleId: string | null;
 
   setView: (view: ViewId) => void;
   switchTenant: () => void;
@@ -44,6 +46,8 @@ interface Store {
   rerun: () => void;
   approve: () => void;
   showToast: (msg: string, amber?: boolean) => void;
+  openArticle: (id: string) => void;
+  closeArticle: () => void;
 }
 
 const StoreContext = createContext<Store | null>(null);
@@ -74,7 +78,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [pipeline, setPipeline] = useState<PipeNode[]>(() => clonePipeline(0));
   const [messages, setMessages] = useState<ChatMessage[]>(() => [greeting(0, nextMsgId)]);
   const [toast, setToast] = useState<ToastState | null>(null);
+  const [openArticleId, setOpenArticleId] = useState<string | null>(null);
   const toastSeq = useRef(0);
+
+  const openArticle = useCallback((id: string) => setOpenArticleId(id), []);
+  const closeArticle = useCallback(() => setOpenArticleId(null), []);
 
   const showToast = useCallback((msg: string, amber = false) => {
     toastSeq.current += 1;
@@ -98,6 +106,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const next = (prev + 1) % tenantCount;
       setActiveSlideFix(null);
       setTraceKey(null);
+      setOpenArticleId(null);
       setPipeline(clonePipeline(next));
       setMessages([greeting(next, nextMsgId)]);
       showToast(`テナントを「${getTenants()[next].name}」に切り替えました`);
@@ -168,6 +177,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pipeline,
       messages,
       toast,
+      openArticleId,
       setView,
       switchTenant,
       fixSlide,
@@ -175,6 +185,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       rerun,
       approve,
       showToast,
+      openArticle,
+      closeArticle,
     }),
     [
       view,
@@ -184,6 +196,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       pipeline,
       messages,
       toast,
+      openArticleId,
       setView,
       switchTenant,
       fixSlide,
@@ -191,6 +204,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       rerun,
       approve,
       showToast,
+      openArticle,
+      closeArticle,
     ],
   );
 

@@ -8,6 +8,7 @@ import type {
   SummaryData,
 } from "@/data/types";
 import type { BriefingData } from "@/data/types";
+import { useStore } from "@/state/store";
 
 /** Inline rich text: dummy copy contains <b> emphasis from the mockup. */
 function Rich({ html, className }: { html: string; className?: string }) {
@@ -127,28 +128,48 @@ function StrategySlide({ d }: { d: StrategySlideData }) {
 }
 
 function PlanSlide({ d }: { d: PlanSlideData }) {
+  const { openArticle } = useStore();
   return (
     <>
       <Lead html={d.lead} />
       <div className="pieces">
-        {d.pieces.map((p, i) => (
-          <div className="piece" key={i}>
-            <div className="pl">
-              <div className="pt">{p.title}</div>
-              <div className="pm">
-                {p.channels.map((c) => (
-                  <span className="ch" key={c}>
-                    {c}
-                  </span>
-                ))}
-                {p.track ? <span>{p.track}</span> : null}
+        {d.pieces.map((p, i) => {
+          const clickable = !!p.articleId;
+          return (
+            <div
+              className={`piece${clickable ? " clickable" : ""}`}
+              key={i}
+              role={clickable ? "button" : undefined}
+              tabIndex={clickable ? 0 : undefined}
+              onClick={clickable ? () => openArticle(p.articleId!) : undefined}
+              onKeyDown={
+                clickable
+                  ? (e) => {
+                      if (e.key === "Enter" || e.key === " ") openArticle(p.articleId!);
+                    }
+                  : undefined
+              }
+            >
+              <div className="pl">
+                <div className="pt">
+                  {p.title}
+                  {clickable ? <span className="readcue">中身を読む ▸</span> : null}
+                </div>
+                <div className="pm">
+                  {p.channels.map((c) => (
+                    <span className="ch" key={c}>
+                      {c}
+                    </span>
+                  ))}
+                  {p.track ? <span>{p.track}</span> : null}
+                </div>
+              </div>
+              <div className="pr">
+                <span className={`scorepill ${p.status}`}>{p.statusLabel}</span>
               </div>
             </div>
-            <div className="pr">
-              <span className={`scorepill ${p.status}`}>{p.statusLabel}</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );

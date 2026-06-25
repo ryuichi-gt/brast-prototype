@@ -5,6 +5,7 @@ import { LeftRail } from "./LeftRail";
 import { TopBar } from "./TopBar";
 import { Toast } from "./Toast";
 import { ApproveBar } from "./ApproveBar";
+import { ArticleReader } from "@/components/ArticleReader";
 import { BriefingView } from "@/components/briefing/BriefingView";
 import { StrategyArchiveView } from "@/components/views/StrategyArchiveView";
 import { TrendsView } from "@/components/views/TrendsView";
@@ -49,6 +50,7 @@ function Shell() {
           {view === "briefing" ? <ApproveBar /> : null}
         </main>
       </div>
+      <ArticleReader />
       <Toast />
     </>
   );
