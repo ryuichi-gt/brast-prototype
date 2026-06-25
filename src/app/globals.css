@@ -1803,6 +1803,135 @@ button {
     max-width: 760px;
   }
 }
+/* =======================================================
+   v2 — vertical deck + sticky footer + AI-chat operation
+   ======================================================= */
+
+/* deck: all 7 slides stacked vertically in one scroll (no carousel) */
+.deck.stacked {
+  min-height: auto;
+}
+.deck.stacked .slide {
+  display: flex;
+  flex: none;
+  border-top: 1px solid var(--paper-line);
+  animation: none;
+}
+.deck.stacked .slide:first-child {
+  border-top: none;
+}
+
+/* sticky footer: the human decision (amber), always pinned. Same layout on
+   desktop and mobile. */
+.approvebar {
+  position: sticky;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 26px;
+  border-top: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(16, 23, 36, 0.86), rgba(12, 17, 27, 0.97));
+  backdrop-filter: blur(8px);
+}
+.approvebar .grow {
+  flex: 1;
+}
+.approvebar .hint {
+  font-size: 11.5px;
+  color: var(--t-md);
+}
+
+/* AI chat panel — the primary operation surface */
+.chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--ink-1);
+  border-top: 1px solid var(--line-soft);
+}
+.chathead {
+  padding: 13px 16px 4px;
+}
+.chatlog {
+  flex: 1 1 auto;
+  min-height: 170px;
+  overflow: auto;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.msg {
+  max-width: 90%;
+  font-size: 12.5px;
+  line-height: 1.55;
+  padding: 9px 12px;
+  border-radius: 13px;
+  white-space: pre-wrap;
+}
+.msg.ai {
+  align-self: flex-start;
+  background: var(--ink-3);
+  border: 1px solid var(--line);
+  color: var(--t-hi);
+  border-bottom-left-radius: 4px;
+}
+.msg.you {
+  align-self: flex-end;
+  background: rgba(70, 203, 190, 0.14);
+  border: 1px solid var(--signal-dim);
+  color: #dff6f3;
+  border-bottom-right-radius: 4px;
+}
+.msg .rerun {
+  display: block;
+  margin-top: 7px;
+  color: var(--amber);
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 12px;
+}
+.chat .quickfb {
+  padding: 0 16px;
+}
+.chat .dockin {
+  padding: 9px 16px 14px;
+  margin-top: 0;
+}
+
+/* desktop: pin the thinking-process + chat rail so the chat stays usable while
+   the long stacked deck scrolls. */
+@media (min-width: 1181px) {
+  .briefing .pipe {
+    position: sticky;
+    top: 53px;
+    height: calc(100vh - 53px - 61px);
+    overflow: hidden;
+  }
+  .briefing .pipehead {
+    flex: none;
+  }
+  .briefing .pipeline {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: auto;
+  }
+  .briefing .chat {
+    flex: 1 1 0;
+  }
+}
+
+/* narrow: chat gets a comfortable bounded height under the stacked deck */
+@media (max-width: 1180px) {
+  .chatlog {
+    max-height: 300px;
+  }
+}
+
 @media (max-width: 920px) {
   :root {
     --rail: 0px;
@@ -1887,5 +2016,16 @@ button {
   .radar {
     max-width: 300px;
     margin: 0 auto;
+  }
+}
+
+@media (max-width: 920px) {
+  .approvebar {
+    padding: 10px 14px;
+  }
+  .approvebar .hint {
+    flex-basis: 100%;
+    order: -1;
+    margin-bottom: 2px;
   }
 }

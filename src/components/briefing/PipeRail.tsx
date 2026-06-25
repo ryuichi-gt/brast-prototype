@@ -1,24 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Icon } from "@/components/Icon";
-import { traceContains, traceMessage } from "@/data/product";
+import { traceContains } from "@/data/product";
 import { useStore } from "@/state/store";
-import type { TraceKey } from "@/data/types";
+import { ChatPanel } from "./ChatPanel";
 
-/** Right rail: the thinking process (pipeline) + feedback dock. */
+/** Right rail: the thinking process (pipeline) + AI chat (operation surface). */
 export function PipeRail() {
-  const { pipeline, traceKey, setTrace, sendFeedback, rerun } = useStore();
-  const [text, setText] = useState("");
-
-  const msg = traceKey ? traceMessage(traceKey) : null;
-
-  const submit = () => {
-    const v = text.trim();
-    if (!v) return;
-    sendFeedback(v);
-    setText("");
-  };
+  const { pipeline, traceKey } = useStore();
 
   return (
     <div className="pipe">
@@ -28,7 +17,7 @@ export function PipeRail() {
           &nbsp;思考プロセス
         </div>
         <div className="s">
-          このブリーフィングを作った工程です。気になるスライドを「直す」と、原因の工程まで遡って下流だけ再実行します。
+          このブリーフィングを作った工程です。チャットで直したい点を伝えると、原因の工程まで遡って下流だけ再実行します。
         </div>
       </div>
 
@@ -60,45 +49,7 @@ export function PipeRail() {
         })}
       </div>
 
-      <div className="dock">
-        <div className="dl">フィードバック — 部下に指示するように</div>
-        {msg ? (
-          <div className="tracemsg show">
-            <b>{msg.title}</b> の仕事に差し戻します。{msg.body}。<br />
-            既に承認済みの記事は残したまま進められます。{" "}
-            <b style={{ cursor: "pointer", textDecoration: "underline" }} onClick={rerun} role="button" tabIndex={0}>
-              ここから再実行 ▸
-            </b>
-          </div>
-        ) : null}
-        <div className="dockin">
-          <input
-            id="fbinput"
-            placeholder="例：トレンドに○○も加えて戦略から作り直して"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") submit();
-            }}
-          />
-          <button className="send" aria-label="送信" onClick={submit}>
-            <Icon id="send" />
-          </button>
-        </div>
-        <div className="quickfb">
-          {QUICK.map((q) => (
-            <button key={q.key} onClick={() => setTrace(q.key)}>
-              {q.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <ChatPanel />
     </div>
   );
 }
-
-const QUICK: { key: TraceKey; label: string }[] = [
-  { key: "strat", label: "戦略から作り直す" },
-  { key: "trend", label: "トレンドを再調査" },
-  { key: "gen", label: "この記事だけ再生成" },
-];

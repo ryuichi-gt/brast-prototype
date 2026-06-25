@@ -1,14 +1,13 @@
 "use client";
 
-import { Icon } from "@/components/Icon";
 import { SLIDE_META } from "@/data/product";
 import { getBriefing } from "@/lib/api";
 import { useStore } from "@/state/store";
 import { SlideBody } from "./slides";
 
-/** The warm paper presentation deck: 7 slides + flag-to-rework + slide rail. */
+/** The warm paper deck. All 7 slides stacked vertically (single-scroll). */
 export function Deck() {
-  const { tenant, slide, flagged, goSlide, toggleFlag } = useStore();
+  const { tenant, activeSlideFix, fixSlide } = useStore();
   const briefing = getBriefing(tenant);
 
   return (
@@ -26,15 +25,15 @@ export function Deck() {
         </span>
       </div>
 
-      <div className="deck">
+      <div className="deck stacked">
         {SLIDE_META.map((s, i) => (
-          <div className={`slide${i === slide ? " show" : ""}`} key={s.key} data-slide={i}>
+          <div className="slide" key={s.key} data-slide={i}>
             <div className="flagwrap">
               <button
-                className={`flagbtn${flagged[s.key] ? " flagged" : ""}`}
-                onClick={() => toggleFlag(s.key, s.trace)}
+                className={`flagbtn${activeSlideFix === s.key ? " flagged" : ""}`}
+                onClick={() => fixSlide(s.key)}
               >
-                {flagged[s.key] ? "差し戻し中" : "このスライドを直す"}
+                {activeSlideFix === s.key ? "差し戻し中" : "このスライドを直す"}
               </button>
             </div>
             <div className="skicker">
@@ -50,32 +49,6 @@ export function Deck() {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="deckrail">
-        <button className="navarrow" aria-label="前へ" onClick={() => goSlide(slide - 1)}>
-          <Icon id="left" />
-        </button>
-        <div className="dots">
-          {SLIDE_META.map((s, i) => (
-            <div
-              key={s.key}
-              className={`dotseg${i < slide ? " done" : ""}${i === slide ? " active" : ""}`}
-              onClick={() => goSlide(i)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") goSlide(i);
-              }}
-            >
-              <div className="bar" />
-              <div className="lab">{s.eye}</div>
-            </div>
-          ))}
-        </div>
-        <button className="navarrow" aria-label="次へ" onClick={() => goSlide(slide + 1)}>
-          <Icon id="right" />
-        </button>
       </div>
     </div>
   );

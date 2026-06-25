@@ -4,6 +4,7 @@ import { StoreProvider, useStore } from "@/state/store";
 import { LeftRail } from "./LeftRail";
 import { TopBar } from "./TopBar";
 import { Toast } from "./Toast";
+import { ApproveBar } from "./ApproveBar";
 import { BriefingView } from "@/components/briefing/BriefingView";
 import { StrategyArchiveView } from "@/components/views/StrategyArchiveView";
 import { TrendsView } from "@/components/views/TrendsView";
@@ -35,6 +36,7 @@ function CurrentView() {
 }
 
 function Shell() {
+  const { view } = useStore();
   return (
     <>
       <div className="app">
@@ -44,6 +46,7 @@ function Shell() {
           <div className="scroll">
             <CurrentView />
           </div>
+          {view === "briefing" ? <ApproveBar /> : null}
         </main>
       </div>
       <Toast />

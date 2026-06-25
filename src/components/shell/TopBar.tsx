@@ -4,9 +4,10 @@ import { NAV } from "@/data/product";
 import { getBriefing, getTenant } from "@/lib/api";
 import { useStore } from "@/state/store";
 
-/** Top bar: breadcrumb + (on briefing) week pill and approve/reject actions. */
+/** Top bar: breadcrumb + (on briefing) the week pill. The approve/reject
+ * actions now live in the sticky footer (ApproveBar). */
 export function TopBar() {
-  const { view, tenant, approve, showToast } = useStore();
+  const { view, tenant } = useStore();
   const t = getTenant(tenant);
   const isBrief = view === "briefing";
   const briefing = getBriefing(tenant);
@@ -23,28 +24,14 @@ export function TopBar() {
       </div>
       <div className="grow" />
       {isBrief ? (
-        <>
-          <div className="weekpill">
-            <span className="live" style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)" }} />
-            {briefing.weekPill.code} · <b>{briefing.weekPill.date}</b> 週
-          </div>
-          <button
-            className="btn btn-ghost"
-            onClick={() => {
-              const el = document.getElementById("fbinput") as HTMLInputElement | null;
-              el?.focus();
-              showToast("差し戻したいスライドを選ぶか、フィードバックを入力してください", true);
-            }}
-          >
-            差し戻す
-          </button>
-          <button className="btn btn-amber" onClick={approve}>
-            このブリーフィングを承認して実行
-          </button>
-        </>
+        <div className="weekpill">
+          <span className="live" style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--signal)" }} />
+          {briefing.weekPill.code} · <b>{briefing.weekPill.date}</b> 週
+        </div>
       ) : (
         <div className="weekpill mono">{t.unit}</div>
       )}
     </header>
   );
 }
+
