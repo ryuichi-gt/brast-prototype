@@ -2303,3 +2303,138 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* =======================================================
+   M5 — Brand Operating Rules (pillar 1)
+   ======================================================= */
+.rule {
+  background: var(--ink-1);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  padding: 15px 17px;
+  margin-bottom: 11px;
+}
+.rule:hover {
+  border-color: var(--line);
+}
+.rule.ai {
+  background: linear-gradient(90deg, rgba(70, 203, 190, 0.08), transparent);
+  border-color: var(--signal-dim);
+}
+.rule-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.rule-title {
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.rule-body {
+  color: var(--t-md);
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin-top: 7px;
+}
+.rule-reason {
+  font-size: 12px;
+  color: #cbb07a;
+  line-height: 1.6;
+  margin-top: 8px;
+  padding: 8px 11px;
+  background: rgba(230, 165, 59, 0.08);
+  border-left: 2px solid var(--amber-deep);
+  border-radius: 0 8px 8px 0;
+}
+.rule-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.rule-actions .btn {
+  padding: 7px 14px;
+  font-size: 12px;
+}
+.ai-flag {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(70, 203, 190, 0.16);
+  color: var(--signal);
+  border: 1px solid var(--signal-dim);
+}
+.guardtag {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.guardtag.must {
+  background: rgba(95, 185, 126, 0.16);
+  color: var(--ok);
+}
+.guardtag.forbidden {
+  background: rgba(224, 119, 95, 0.16);
+  color: var(--rose);
+}
+.guardcat {
+  font-size: 13px;
+  font-weight: 700;
+}
+.kpitag {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+.kpitag.steady {
+  background: rgba(70, 203, 190, 0.14);
+  color: var(--signal-dim);
+}
+.kpitag.campaign {
+  background: rgba(230, 165, 59, 0.16);
+  color: var(--amber-deep);
+}
+.revisions {
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.rev {
+  display: grid;
+  grid-template-columns: 96px 150px 1fr;
+  gap: 12px;
+  padding: 11px 15px;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 12px;
+  align-items: baseline;
+}
+.rev:last-child {
+  border-bottom: none;
+}
+.rev-date {
+  color: var(--t-lo);
+  font-size: 11px;
+}
+.rev-who {
+  color: var(--signal-dim);
+  font-weight: 600;
+}
+.rev-note {
+  color: var(--t-md);
+  line-height: 1.5;
+}
+@media (max-width: 920px) {
+  .rev {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+}

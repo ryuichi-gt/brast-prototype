@@ -4,9 +4,12 @@ import { SCORE_THRESHOLD } from "./config";
 /** Left-rail navigation. teal/amber semantics: the amber badge = needs you. */
 export const NAV: NavItem[] = [
   { id: "briefing", label: "週次ブリーフィング", icon: "brief", badge: "要承認" },
+  { id: "results", label: "実行・結果", icon: "results" },
   { id: "strategy", label: "戦略アーカイブ", icon: "strat" },
-  { id: "trends", label: "トレンド・レーダー", icon: "radar" },
+  { sep: true },
+  { id: "rules", label: "ブランド運用ルール", icon: "rules", badge: "提案" },
   { id: "knowledge", label: "ブランドナレッジ", icon: "know" },
+  { id: "trends", label: "トレンド・レーダー", icon: "radar" },
   { sep: true },
   { id: "content", label: "コンテンツ", icon: "content", badge: "7" },
   { id: "channels", label: "チャネル", icon: "chan" },

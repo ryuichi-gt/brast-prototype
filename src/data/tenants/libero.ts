@@ -190,4 +190,34 @@ export const libero: TenantBundle = {
       { ic: "in", color: "#7fb1ff", n: "LinkedIn", role: "意思決定層への到達。比較検討時の想起を狙うソートリーダーシップ担当。", auto: true, posts: "週2", reach: "6k" },
     ],
   },
+
+  brandRules: {
+    summary:
+      "ブランドの憲法です。戦略・コンテンツ・外部からの修正指示は、すべてこのルールに照合されます。各ルールはまずAIが提案し、あなたが承認・編集します。",
+    channelStrategy: [
+      { name: "オウンドメディア", role: "技術解説の母艦。専門性と検索流入の中心。", auto: true, status: "approved" },
+      { name: "LinkedIn", role: "意思決定層への到達。ソートリーダーシップ担当。", auto: true, status: "approved" },
+      {
+        name: "【AI提案】導入事例 特集サイトの新設",
+        role: "実装と運用の現実を語る事例を独立サイトに集約し、比較検討時の想起を作る。",
+        auto: true,
+        status: "proposed",
+        aiProposed: true,
+        reason: "エンタープライズは事例を重視。事例特集の独立サイトはリード獲得に直結すると判断。",
+      },
+    ],
+    guardrails: [
+      { kind: "must", category: "トーン", text: "技術的・実直・誇張しない。実装の現実に根ざす。", status: "approved" },
+      { kind: "forbidden", category: "技術的正確性", text: "裏取りのない技術的主張・誇張したベンチマークを使わない。", status: "approved" },
+      { kind: "forbidden", category: "主張の制約", text: "他社の名指し批判をしない。比較は事実ベースに限る。", status: "approved" },
+    ],
+    kpis: [
+      { track: "steady", label: "認知・信頼", definition: "記事リーチ、指名検索、技術的評価の蓄積。", status: "approved" },
+      { track: "campaign", label: "リード獲得", definition: "問い合わせ・資料DL・商談化数。", status: "approved" },
+    ],
+    revisions: [
+      { date: "2026-06-22", who: "AI · Strategy Orchestrator", note: "導入事例 特集サイトの新設を提案" },
+      { date: "2026-06-01", who: "AI · Strategy Orchestrator", note: "初期ブランド運用ルールを提案" },
+    ],
+  },
 };

@@ -9,6 +9,7 @@
 import { TENANT_BUNDLES } from "@/data/tenants";
 import type {
   Article,
+  BrandRules,
   BriefingData,
   ChannelsData,
   ContentData,
@@ -59,4 +60,8 @@ export function getChannels(tenantIndex: number): ChannelsData {
 
 export function getArticle(tenantIndex: number, id: string): Article | null {
   return bundleAt(tenantIndex).articles?.[id] ?? null;
+}
+
+export function getBrandRules(tenantIndex: number): BrandRules | null {
+  return bundleAt(tenantIndex).brandRules ?? null;
 }

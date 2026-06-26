@@ -191,4 +191,34 @@ export const bcp: TenantBundle = {
       { ic: "X", color: "#cfd6e2", n: "X", role: "速報性の高い防災・BCP情報を日次で発信。即時拡散担当。", auto: true, posts: "週5", reach: "8k" },
     ],
   },
+
+  brandRules: {
+    summary:
+      "ブランドの憲法です。戦略・コンテンツ・外部からの修正指示は、すべてこのルールに照合されます。各ルールはまずAIが提案し、あなたが承認・編集します。",
+    channelStrategy: [
+      { name: "オウンドメディア", role: "啓発記事の母艦。検索流入と信頼の中心。", auto: true, status: "approved" },
+      { name: "X", role: "速報性の高い防災・BCP情報を日次で発信。", auto: true, status: "approved" },
+      {
+        name: "【AI提案】BCP自己診断ツール付き専用LPの新設",
+        role: "「自社のBCP対応度を5分で診断」できるツールLPで、問い合わせ前の接点を作る。",
+        auto: true,
+        status: "proposed",
+        aiProposed: true,
+        reason: "防災需要が高い局面で、診断ツールはCVに直結する強い導線になると判断。",
+      },
+    ],
+    guardrails: [
+      { kind: "must", category: "トーン", text: "実直・不安を煽らない。実務に効く情報として淡々と。", status: "approved" },
+      { kind: "forbidden", category: "景表法", text: "「絶対安全」等の断定・誇大表現を使わない。", status: "approved" },
+      { kind: "forbidden", category: "主張の制約", text: "災害の恐怖を過度に煽る訴求をしない。", status: "approved" },
+    ],
+    kpis: [
+      { track: "steady", label: "認知・信頼", definition: "記事リーチ、指名検索の継続的増加。", status: "approved" },
+      { track: "campaign", label: "CV・問い合わせ", definition: "資料DL・診断完了・問い合わせ件数。", status: "approved" },
+    ],
+    revisions: [
+      { date: "2026-06-22", who: "AI · Strategy Orchestrator", note: "BCP自己診断ツールLPの新設を提案" },
+      { date: "2026-06-01", who: "AI · Strategy Orchestrator", note: "初期ブランド運用ルールを提案" },
+    ],
+  },
 };

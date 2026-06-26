@@ -195,4 +195,35 @@ export const sympafit: TenantBundle = {
       { ic: "F", color: "#e69ac0", n: "femtech", role: "女性の健康と血糖をつなぐ専門発信。新規セグメント開拓。", auto: true, posts: "週2", reach: "8k" },
     ],
   },
+
+  brandRules: {
+    summary:
+      "ブランドの憲法です。戦略・コンテンツ・外部からの修正指示は、すべてこのルールに照合されます。各ルールはまずAIが提案し、あなたが承認・編集します。",
+    channelStrategy: [
+      { name: "main", role: "科学解説の母艦。一般健康層への信頼構築の中心。", auto: true, status: "approved" },
+      { name: "athlete", role: "持久系アスリート特化。実践コンテンツ。", auto: true, status: "approved" },
+      { name: "femtech", role: "女性の健康と血糖をつなぐ専門発信。", auto: true, status: "approved" },
+      {
+        name: "【AI提案】femtech 専用メディアサイトの新設",
+        role: "ホルモン周期と血糖という独自テーマを、独立メディアで体系化。",
+        auto: true,
+        status: "proposed",
+        aiProposed: true,
+        reason: "femtech領域の関心が上昇しており、専用サイトで検索流入と信頼を独占できると判断。",
+      },
+    ],
+    guardrails: [
+      { kind: "must", category: "トーン", text: "科学的・誠実・断定しない。一次研究に基づく。", status: "approved" },
+      { kind: "forbidden", category: "薬機法", text: "効果・効能の断定や治療を想起させる表現を使わない。", status: "approved" },
+      { kind: "forbidden", category: "科学的根拠", text: "出典のない主張・誇張した数値を使わない。", status: "approved" },
+    ],
+    kpis: [
+      { track: "steady", label: "認知・信頼", definition: "記事リーチ、指名検索、専門性の評価。", status: "approved" },
+      { track: "campaign", label: "CV・登録", definition: "アプリ無料トライアルの登録数・CVR。", status: "approved" },
+    ],
+    revisions: [
+      { date: "2026-06-22", who: "AI · Strategy Orchestrator", note: "femtech専用メディアの新設を提案" },
+      { date: "2026-06-01", who: "AI · Strategy Orchestrator", note: "初期ブランド運用ルールを提案" },
+    ],
+  },
 };

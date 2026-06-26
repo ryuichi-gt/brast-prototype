@@ -265,6 +265,55 @@ export const jrc: TenantBundle = {
     ],
   },
 
+  brandRules: {
+    summary:
+      "ブランドの憲法です。戦略・コンテンツ・外部からの修正指示は、すべてこのルールに照合されます（規範チェック S5）。各ルールはまずAIが提案し、あなたが承認・編集します。",
+    channelStrategy: [
+      { name: "オウンドメディア (jrce.jp)", role: "ORCA・医療DXの実務解説の母艦。検索流入と信頼の中心。", auto: true, status: "approved" },
+      { name: "X", role: "記事の小出し・速報。日次の接点づくり。", auto: true, status: "approved" },
+      { name: "PR TIMES", role: "重要発表の手動配信チャネル（API連携不可）。", auto: false, status: "approved" },
+      {
+        name: "【AI提案】医療機関向け 制度対応 専用メディアサイトの新設",
+        role: "ORCA/医療DXの導入検討層に特化した独立メディア。オウンド内の一記事群では埋もれる「制度対応の意思決定支援」を専用ドメインで束ねる。",
+        auto: true,
+        status: "proposed",
+        aiProposed: true,
+        reason: "電子カルテ情報共有サービスの本格運用（2026年度冬）に向け検討需要が増大。検索意図が『製品』ではなく『制度対応』に寄るため、専用サイトで信頼と指名を獲得できると判断。",
+      },
+    ],
+    guardrails: [
+      { kind: "must", category: "トーン", text: "実直・誇張しない・不安を煽らない。専門家として淡々と伝える。", status: "approved" },
+      { kind: "forbidden", category: "薬機法・景表法", text: "医療広告ガイドライン／景表法に抵触する効果の断定・最上級表現を使わない。", status: "approved" },
+      { kind: "forbidden", category: "主張の制約", text: "他社製品を名指しで優劣比較・断定批判しない（比較は事実ベースに限る）。", status: "approved" },
+      { kind: "forbidden", category: "レピュテーション", text: "ランサム・事故で患者の不安を煽る表現を禁止。事例は施設名匿名・本人許諾を前提とする。", status: "approved" },
+      {
+        kind: "must",
+        category: "トーン",
+        text: "生成AI・自動化の説明では『人の判断を置き換えず、支える』前提を必ず明記する。",
+        status: "proposed",
+        aiProposed: true,
+        reason: "現場の置き換え不安への配慮と、差別化メッセージの一貫性を担保するため。",
+      },
+    ],
+    kpis: [
+      { track: "steady", label: "認知・信頼", definition: "オウンドの検索流入、記事リーチ、指名検索数の継続的な増加。", status: "approved" },
+      { track: "campaign", label: "CV・問い合わせ", definition: "資料DL数・問い合わせ件数・該当LPのCVR。", status: "approved" },
+      {
+        track: "campaign",
+        label: "加算取得相談の獲得",
+        definition: "医療DX推進体制整備加算に関する相談・問い合わせ件数。",
+        status: "proposed",
+        aiProposed: true,
+        reason: "加算は投資回収の文脈でCVに直結し、当社サービスへの導線になるため、独立KPIとして追跡を提案。",
+      },
+    ],
+    revisions: [
+      { date: "2026-06-22", who: "AI · Strategy Orchestrator", note: "共有サービス対応に伴い、制度対応専用メディアの新設とKPI追加を提案" },
+      { date: "2026-06-15", who: "岡本 龍一", note: "トーン規範『不安を煽らない』を承認" },
+      { date: "2026-06-01", who: "AI · Strategy Orchestrator", note: "初期ブランド運用ルール（出面・ガードレール・KPI）を提案" },
+    ],
+  },
+
   articles: {
     "fhir-guide": {
       id: "fhir-guide",

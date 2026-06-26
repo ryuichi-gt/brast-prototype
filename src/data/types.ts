@@ -8,12 +8,14 @@
 /* ---------- Navigation / shell ---------- */
 export type ViewId =
   | "briefing"
+  | "rules"
   | "strategy"
   | "trends"
   | "knowledge"
   | "content"
   | "channels"
-  | "agents";
+  | "agents"
+  | "results";
 
 export type IconId =
   | "brief"
@@ -23,6 +25,8 @@ export type IconId =
   | "content"
   | "chan"
   | "agent"
+  | "rules"
+  | "results"
   | "chev"
   | "left"
   | "right"
@@ -317,4 +321,53 @@ export interface TenantBundle {
   channels: ChannelsData;
   /** Full generated pieces, keyed by id, for the article reader (optional). */
   articles?: Record<string, Article>;
+  /** Pillar 1 — the brand "constitution" that governs everything (M5). */
+  brandRules?: BrandRules;
+}
+
+/* ---------- Pillar 1: Brand Operating Rules (M5) ---------- */
+/** AI proposes, the human approves/edits — nothing starts from a blank page. */
+export type RuleStatus = "proposed" | "approved" | "editing";
+
+export interface RevisionEntry {
+  date: string;
+  who: string;
+  note: string;
+}
+
+export interface ChannelRule {
+  name: string;
+  role: string;
+  /** API-linked (auto) vs manual posting. */
+  auto: boolean;
+  status: RuleStatus;
+  /** True when this is an AI proposal (e.g. "stand up a new media site"). */
+  aiProposed?: boolean;
+  reason?: string;
+}
+
+export interface Guardrail {
+  kind: "must" | "forbidden";
+  category: string;
+  text: string;
+  status: RuleStatus;
+  aiProposed?: boolean;
+  reason?: string;
+}
+
+export interface KpiRule {
+  track: "steady" | "campaign";
+  label: string;
+  definition: string;
+  status: RuleStatus;
+  aiProposed?: boolean;
+  reason?: string;
+}
+
+export interface BrandRules {
+  summary: string;
+  channelStrategy: ChannelRule[];
+  guardrails: Guardrail[];
+  kpis: KpiRule[];
+  revisions: RevisionEntry[];
 }

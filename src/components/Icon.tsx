@@ -9,6 +9,8 @@ const PATHS: Record<IconId, string> = {
   content: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
   chan: '<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M7.7 7.7 10.5 16M16.3 7.7 13.5 16"/>',
   agent: '<rect x="4" y="8" width="16" height="11" rx="2"/><path d="M12 8V5M9 4h6"/><circle cx="9" cy="13.5" r="1"/><circle cx="15" cy="13.5" r="1"/>',
+  rules: '<path d="M12 3l7 3v5c0 4.5-3 7.6-7 9-4-1.4-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  results: '<path d="M4 19V5"/><path d="M4 19h16"/><rect x="7" y="11" width="3" height="5"/><rect x="12" y="8" width="3" height="8"/><rect x="17" y="13" width="3" height="3"/>',
   chev: '<path d="M9 6l6 6-6 6"/>',
   left: '<path d="M15 6l-6 6 6 6"/>',
   right: '<path d="M9 6l6 6-6 6"/>',

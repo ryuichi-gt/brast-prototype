@@ -7,6 +7,7 @@ import { Toast } from "./Toast";
 import { ApproveBar } from "./ApproveBar";
 import { ArticleReader } from "@/components/ArticleReader";
 import { BriefingView } from "@/components/briefing/BriefingView";
+import { BrandRulesView } from "@/components/views/BrandRulesView";
 import { StrategyArchiveView } from "@/components/views/StrategyArchiveView";
 import { TrendsView } from "@/components/views/TrendsView";
 import { KnowledgeView } from "@/components/views/KnowledgeView";
@@ -19,6 +20,17 @@ function CurrentView() {
   switch (view) {
     case "briefing":
       return <BriefingView />;
+    case "rules":
+      return <BrandRulesView />;
+    case "results":
+      return (
+        <div className="page">
+          <div className="pagehead">
+            <h1>実行・結果</h1>
+            <p>配信の進行状況と実行済み戦略の結果（リーチ／CV／期待値到達）。M8 で実装します。</p>
+          </div>
+        </div>
+      );
     case "strategy":
       return <StrategyArchiveView />;
     case "trends":
