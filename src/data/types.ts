@@ -326,6 +326,8 @@ export type ArticleBlock =
 /** A full generated piece, viewable in the article reader. */
 export interface Article {
   id: string;
+  /** Source StrategyBet (S4) this piece materializes — traceability (M7). */
+  fromBetId?: string;
   kind: "article" | "sns" | "asset";
   title: string;
   dek?: string;

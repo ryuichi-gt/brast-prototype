@@ -390,6 +390,7 @@ export const jrc: TenantBundle = {
   articles: {
     "fhir-guide": {
       id: "fhir-guide",
+      fromBetId: "bet-fhir",
       kind: "article",
       title: "電子カルテ情報共有サービスとは何か — ORCAユーザーが「三文書六情報」にどう備えるか",
       dek: "2026年度冬の本格運用に向けて、ORCAを使う診療所が「三文書六情報」とHL7 FHIRにどう備えればよいかを、実装と運用の観点から整理します。",
@@ -429,6 +430,7 @@ export const jrc: TenantBundle = {
 
     "kasan-checklist": {
       id: "kasan-checklist",
+      fromBetId: "bet-fhir",
       kind: "article",
       title: "医療DX推進体制整備加算を取り切る — 要件と運用の実務チェック",
       dek: "2024年度改定で新設された医療DX推進体制整備加算。要件と、取得後に効いてくる運用面の実務を、チェック形式で整理します。",
@@ -468,6 +470,7 @@ export const jrc: TenantBundle = {
 
     "recebot": {
       id: "recebot",
+      fromBetId: "bet-orca",
       kind: "article",
       title: "月末のレセプト残業をなくす — レセボットで請求業務を自動化する実務",
       dek: "月末に集中するレセプト業務。レセボット（Rece-Bot）で請求の確認・点検を自動化し、残業と人的ミスを減らす実務を解説します。",
@@ -504,6 +507,7 @@ export const jrc: TenantBundle = {
 
     "security60": {
       id: "security60",
+      fromBetId: "bet-sec",
       kind: "article",
       title: "安全管理ガイドライン第6.0版、クリニックが2027年度までにやること",
       dek: "医療情報システムの安全管理ガイドライン第6.0版。クリニックが2027年度までに整えるべきこと（二要素認証・BCP）を、過度に不安を煽らず実務目線で整理します。",
@@ -541,6 +545,7 @@ export const jrc: TenantBundle = {
 
     "fhir-checklist": {
       id: "fhir-checklist",
+      fromBetId: "bet-fhir",
       kind: "asset",
       title: "電子カルテ情報共有サービス対応チェックリスト（配布資料）",
       dek: "自院の電子カルテ情報共有サービス対応状況を、5分で棚卸しできるチェックリスト（配布用）。",
@@ -573,6 +578,7 @@ export const jrc: TenantBundle = {
 
     "kasan-card": {
       id: "kasan-card",
+      fromBetId: "bet-fhir",
       kind: "sns",
       title: "医療DX推進体制整備加算の要件 早見表（SNS用カード）",
       dek: "医療DX推進体制整備加算の要件を、X用に1枚へ要約したカード原稿。",
@@ -599,6 +605,7 @@ export const jrc: TenantBundle = {
 
     "case-orca": {
       id: "case-orca",
+      fromBetId: "bet-orca",
       kind: "article",
       title: "ORCA＋電子カルテ連携 導入事例 vol.4（医療法人A様）",
       dek: "医療法人A様におけるORCA＋電子カルテ連携の導入事例。複数ベンダー混在環境での移行を、診療を止めずに実施しました。",
