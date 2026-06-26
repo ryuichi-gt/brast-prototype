@@ -1,4 +1,5 @@
 import type { TenantBundle } from "../types";
+import { OPPORTUNITY_WEIGHTS as W, RELEVANCE_THRESHOLD as RT } from "../config";
 
 /**
  * JRCエンジニアリング — 医療ITソリューション事業部 (default tenant).
@@ -60,6 +61,78 @@ export const jrc: TenantBundle = {
       strategy: "なぜこの戦略か — 各エージェントの結論と統合",
       plan: "今週の具体プラン — 7本を生成済み、うち6本がしきい値通過",
       schedule: "配信スケジュール — 自動連携と手動投稿を1枚で",
+    },
+    reasoning: {
+      stages: [
+        {
+          id: "s1",
+          code: "S1",
+          name: "信号選別",
+          operation: `概念境界に照らして relevance を採点し、しきい値 ${RT} 未満は除外（キーワード一致ではなく概念適合で判定）。`,
+          inputs: ["ブランドナレッジ（概念境界）", "トレンド／競合の生信号"],
+          outputSummary: "4信号を採用、2信号を除外",
+        },
+        {
+          id: "s2",
+          code: "S2",
+          name: "空白検出",
+          operation: `opportunityScore = ${W.demand}·需要 + ${W.brandFit}·強み適合 + ${W.competitorGap}·競合の空白 + ${W.selfGap}·自社未発信。`,
+          inputs: ["採用信号", "競合カバレッジ", "自社カバレッジ", "強み軸"],
+          outputSummary: "3機会を抽出（最高 91：共有サービス対応）",
+        },
+        {
+          id: "s3",
+          code: "S3",
+          name: "目的割付",
+          operation: "各機会を、ブランド運用ルールのKPIに照らして 定常発信／キャンペーン に分類。",
+          inputs: ["機会", "ブランド運用ルールのKPI（M5）"],
+          outputSummary: "キャンペーン1 / 定常2",
+        },
+        {
+          id: "s4",
+          code: "S4",
+          name: "戦略ベット",
+          operation: "市場・競合の結論を統合し、根拠付きの『賭け』に定式化。priority = impact × brandFit × feasibility。",
+          inputs: ["機会", "採用信号（basis）"],
+          outputSummary: "3ベットを生成（最優先 92：本格運用の窓で実装の現実）",
+        },
+        {
+          id: "s5",
+          code: "S5",
+          name: "規範チェック",
+          operation: "各ベットをブランド運用ルールのガードレールに照合。逸脱は除外または人間確認（外部指示にも適用）。",
+          inputs: ["ベット", "ガードレール（M5）"],
+          outputSummary: "3ベットすべて pass",
+        },
+        {
+          id: "s6",
+          code: "S6",
+          name: "プラン化",
+          operation: "通過ベットを 記事／SNS／配布資料 × チャネル × スケジュール に展開（必要な数だけ必要な媒体に）。",
+          inputs: ["通過ベット", "出面戦略（M5）"],
+          outputSummary: "7コンテンツに展開",
+        },
+      ],
+      scoredSignals: [
+        { id: "sg-fhir", topic: "電子カルテ情報共有サービス（三文書六情報・HL7 FHIR）本格運用接近", relevanceScore: 96, conceptMatchReason: "『ORCA／電子カルテ連携の制度対応』という当社の概念境界に直接該当。三文書六情報・FHIRは提供サービスの中核。", magnitude: 92, velocity: 88, recency: "本日 06:00", sources: ["厚労省 利活用検討会 資料", "業界紙3媒体"] },
+        { id: "sg-kasan", topic: "医療DX推進体制整備加算の要件段階強化", relevanceScore: 89, conceptMatchReason: "診療報酬＝顧客の投資回収の文脈。ORCA運用の延長で語れる概念内。", magnitude: 80, velocity: 70, recency: "今週", sources: ["診療報酬改定 通知"] },
+        { id: "sg-sec", topic: "安全管理ガイドライン第6.0版・2027年度 二要素認証/BCP", relevanceScore: 82, conceptMatchReason: "院内インフラ・保守運用の概念に該当。当社の運用支援と接続。", magnitude: 76, velocity: 60, recency: "今週", sources: ["厚労省ガイドライン", "業界紙"] },
+        { id: "sg-erx", topic: "電子処方箋の病院導入が2割未満（未対応層＝商機）", relevanceScore: 71, conceptMatchReason: "オンライン資格確認／共有サービスと同一基盤。未対応層は商機という概念内。", magnitude: 65, velocity: 40, recency: "今週", sources: ["デジタル庁 ダッシュボード"] },
+      ],
+      droppedSignals: [
+        { topic: "総務省 マイナンバーカードの一般向け広報キャンペーン", reason: "「マイナ」一致で拾われたが、概念境界（医療機関の制度対応・ORCA運用）の外。一般行政広報のため除外（relevance 38 < 60）。" },
+        { topic: "電子書籍ストアの月間ランキング", reason: "「電子」キーワード一致のみ。医療IT概念と無関連のため除外（relevance 9 < 60）。" },
+      ],
+      opportunities: [
+        { id: "op-fhir", topic: "共有サービス対応の意思決定支援", opportunityScore: 91, demand: 94, brandFit: 90, competitorGap: 88, selfGap: 95, angle: "保守・運用・マルチベンダー混在の移行の現実", intent: "campaign", targetKPI: "CV・問い合わせ／加算取得相談", basisSignalIds: ["sg-fhir", "sg-kasan"] },
+        { id: "op-orca", topic: "ORCA・レセプト業務の効率化", opportunityScore: 78, demand: 72, brandFit: 95, competitorGap: 70, selfGap: 80, angle: "現場運用の実務（月末請求の負担軽減）", intent: "steady", targetKPI: "認知・信頼", basisSignalIds: ["sg-kasan", "sg-erx"] },
+        { id: "op-sec", topic: "安全管理ガイドライン第6.0版 対応支援", opportunityScore: 74, demand: 76, brandFit: 82, competitorGap: 60, selfGap: 78, angle: "煽らない実務情報＋保守経路の点検", intent: "steady", targetKPI: "認知・信頼", basisSignalIds: ["sg-sec"] },
+      ],
+      bets: [
+        { id: "bet-fhir", thesis: "本格運用の窓で『実装と運用の現実』の角度から、共有サービス対応の指名を取る", basisSignalIds: ["sg-fhir", "sg-kasan"], fromOpportunityId: "op-fhir", angle: "保守・運用・マルチベンダー移行の現実", channels: ["オウンドメディア", "X", "PR TIMES"], intent: "campaign", targetKPI: "CV・問い合わせ", expectedOutcome: "制度対応・加算取得相談の獲得、指名検索の増加", priority: 92, conformance: { status: "pass" } },
+        { id: "bet-orca", thesis: "ORCA・レセプト効率化の実務発信で、専門性と信頼を継続的に積み上げる", basisSignalIds: ["sg-kasan", "sg-erx"], fromOpportunityId: "op-orca", angle: "現場運用の実務", channels: ["オウンドメディア", "X"], intent: "steady", targetKPI: "認知・信頼", expectedOutcome: "指名検索・記事リーチの継続的増加", priority: 80, conformance: { status: "pass" } },
+        { id: "bet-sec", thesis: "第6.0版の現実的な備えを淡々と解説し、運用支援の信頼を得る", basisSignalIds: ["sg-sec"], fromOpportunityId: "op-sec", angle: "不安を煽らない実務情報", channels: ["オウンドメディア"], intent: "steady", targetKPI: "認知・信頼", expectedOutcome: "セキュリティ運用相談の獲得、信頼の蓄積", priority: 73, conformance: { status: "pass" } },
+      ],
     },
     slides: {
       summary: {

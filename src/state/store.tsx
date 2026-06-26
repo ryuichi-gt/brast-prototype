@@ -10,8 +10,8 @@ import {
   type ReactNode,
 } from "react";
 import { getBriefing, getTenants } from "@/lib/api";
-import { routeFeedback, SLIDE_META, traceMessage } from "@/data/product";
-import type { PipeNode, SlideKey, TraceKey, ViewId } from "@/data/types";
+import { routeFeedback, SLIDE_META, traceMessage, traceToStage } from "@/data/product";
+import type { PipeNode, ReasoningStageId, SlideKey, TraceKey, ViewId } from "@/data/types";
 
 interface ToastState {
   id: number;
@@ -38,6 +38,8 @@ interface Store {
   toast: ToastState | null;
   /** Article id currently open in the reader overlay (null = closed). */
   openArticleId: string | null;
+  /** Reasoning-graph stage whose detail is expanded (null = none). */
+  openStage: ReasoningStageId | null;
 
   setView: (view: ViewId) => void;
   switchTenant: () => void;
@@ -48,6 +50,7 @@ interface Store {
   showToast: (msg: string, amber?: boolean) => void;
   openArticle: (id: string) => void;
   closeArticle: () => void;
+  setOpenStage: (stage: ReasoningStageId | null) => void;
 }
 
 const StoreContext = createContext<Store | null>(null);
@@ -79,10 +82,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<ChatMessage[]>(() => [greeting(0, nextMsgId)]);
   const [toast, setToast] = useState<ToastState | null>(null);
   const [openArticleId, setOpenArticleId] = useState<string | null>(null);
+  const [openStage, setOpenStageRaw] = useState<ReasoningStageId | null>("s4");
   const toastSeq = useRef(0);
 
   const openArticle = useCallback((id: string) => setOpenArticleId(id), []);
   const closeArticle = useCallback(() => setOpenArticleId(null), []);
+  const setOpenStage = useCallback((stage: ReasoningStageId | null) => setOpenStageRaw(stage), []);
 
   const showToast = useCallback((msg: string, amber = false) => {
     toastSeq.current += 1;
@@ -107,6 +112,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       setActiveSlideFix(null);
       setTraceKey(null);
       setOpenArticleId(null);
+      setOpenStageRaw(null);
       setPipeline(clonePipeline(next));
       setMessages([greeting(next, nextMsgId)]);
       showToast(`テナントを「${getTenants()[next].name}」に切り替えました`);
@@ -118,6 +124,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const replyWithTrace = useCallback(
     (key: TraceKey) => {
       setTraceKey(key);
+      setOpenStageRaw(traceToStage(key));
       const m = traceMessage(key);
       pushMsg(
         "ai",
@@ -178,6 +185,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       messages,
       toast,
       openArticleId,
+      openStage,
       setView,
       switchTenant,
       fixSlide,
@@ -187,6 +195,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       showToast,
       openArticle,
       closeArticle,
+      setOpenStage,
     }),
     [
       view,
@@ -197,6 +206,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       messages,
       toast,
       openArticleId,
+      openStage,
       setView,
       switchTenant,
       fixSlide,
@@ -206,6 +216,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       showToast,
       openArticle,
       closeArticle,
+      setOpenStage,
     ],
   );
 

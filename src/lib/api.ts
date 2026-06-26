@@ -14,11 +14,13 @@ import type {
   ChannelsData,
   ContentData,
   KnowledgeItem,
+  ReasoningTrace,
   StrategyWeek,
   Tenant,
   TenantBundle,
   TrendsData,
 } from "@/data/types";
+import { deriveReasoning } from "@/lib/reasoning";
 
 function bundleAt(index: number): TenantBundle {
   const safe = ((index % TENANT_BUNDLES.length) + TENANT_BUNDLES.length) % TENANT_BUNDLES.length;
@@ -64,4 +66,10 @@ export function getArticle(tenantIndex: number, id: string): Article | null {
 
 export function getBrandRules(tenantIndex: number): BrandRules | null {
   return bundleAt(tenantIndex).brandRules ?? null;
+}
+
+/** S1–S6 reasoning trace; hand-authored if present, otherwise derived. */
+export function getReasoning(tenantIndex: number): ReasoningTrace {
+  const b = bundleAt(tenantIndex).briefing;
+  return b.reasoning ?? deriveReasoning(b);
 }

@@ -1,4 +1,4 @@
-import type { Agent, NavItem, SlideMeta, TraceKey } from "./types";
+import type { Agent, NavItem, ReasoningStageId, SlideMeta, TraceKey } from "./types";
 import { SCORE_THRESHOLD } from "./config";
 
 /** Left-rail navigation. teal/amber semantics: the amber badge = needs you. */
@@ -114,6 +114,27 @@ const TRACE_MESSAGES: Record<TraceKey, [string, string]> = {
 export function traceMessage(key: TraceKey): { title: string; body: string } {
   const [title, body] = TRACE_MESSAGES[key] ?? TRACE_MESSAGES.strat;
   return { title, body };
+}
+
+/** Reasoning-graph stage order (S1→S6) and trace mapping. */
+export const STAGE_ORDER: ReasoningStageId[] = ["s1", "s2", "s3", "s4", "s5", "s6"];
+
+const TRACE_TO_STAGE: Record<TraceKey, ReasoningStageId> = {
+  know: "s1",
+  trend: "s1",
+  strat: "s4",
+  gen: "s6",
+  dist: "s6",
+};
+
+export function traceToStage(traceKey: TraceKey | null): ReasoningStageId | null {
+  return traceKey ? TRACE_TO_STAGE[traceKey] : null;
+}
+
+/** A stage is highlighted if it is at or downstream of the traced-back stage. */
+export function stageIsDownstream(from: ReasoningStageId | null, stage: ReasoningStageId): boolean {
+  if (!from) return false;
+  return STAGE_ORDER.indexOf(stage) >= STAGE_ORDER.indexOf(from);
 }
 
 /** Naive intent routing for free-text feedback (demo only). */

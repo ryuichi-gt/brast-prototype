@@ -181,6 +181,71 @@ export interface SlideMeta {
   title: string;
 }
 
+/* ---------- Pillar 2: Reasoning graph (S1–S6, strategy-logic.md) ---------- */
+export interface ScoredSignal {
+  id: string;
+  topic: string;
+  relevanceScore: number;
+  conceptMatchReason: string;
+  magnitude: number;
+  velocity: number;
+  recency: string;
+  sources: string[];
+}
+
+export interface DroppedSignal {
+  topic: string;
+  reason: string;
+}
+
+export interface Opportunity {
+  id: string;
+  topic: string;
+  opportunityScore: number;
+  demand: number;
+  brandFit: number;
+  competitorGap: number;
+  selfGap: number;
+  angle: string;
+  intent: "steady" | "campaign";
+  targetKPI: string;
+  basisSignalIds: string[];
+}
+
+export interface StrategyBet {
+  id: string;
+  thesis: string;
+  basisSignalIds: string[];
+  fromOpportunityId: string;
+  angle: string;
+  channels: string[];
+  intent: "steady" | "campaign";
+  targetKPI: string;
+  expectedOutcome: string;
+  priority: number;
+  conformance: { status: "pass" | "violation"; ruleId?: string; reason?: string };
+}
+
+export type ReasoningStageId = "s1" | "s2" | "s3" | "s4" | "s5" | "s6";
+
+export interface ReasoningStage {
+  id: ReasoningStageId;
+  code: string;
+  name: string;
+  operation: string;
+  inputs: string[];
+  outputSummary: string;
+}
+
+/** reasoningTrace = the S1–S6 glass box the briefing's top graph renders. */
+export interface ReasoningTrace {
+  stages: ReasoningStage[];
+  scoredSignals: ScoredSignal[];
+  droppedSignals: DroppedSignal[];
+  opportunities: Opportunity[];
+  bets: StrategyBet[];
+}
+
 export interface BriefingData {
   weekLabel: string;
   weekPill: { code: string; date: string };
@@ -188,6 +253,8 @@ export interface BriefingData {
   pipeline: PipeNode[];
   /** Per-slide H2 headline (tenant-specific). */
   titles: Record<SlideKey, string>;
+  /** Pillar 2 — S1–S6 reasoning trace (optional; derived if absent). */
+  reasoning?: ReasoningTrace;
   slides: {
     summary: SummaryData;
     knowledge: KnowledgeSlideData;
