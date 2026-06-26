@@ -15,6 +15,7 @@ import type {
   ContentData,
   KnowledgeItem,
   ReasoningTrace,
+  ResultsData,
   StrategyWeek,
   Tenant,
   TenantBundle,
@@ -72,4 +73,31 @@ export function getBrandRules(tenantIndex: number): BrandRules | null {
 export function getReasoning(tenantIndex: number): ReasoningTrace {
   const b = bundleAt(tenantIndex).briefing;
   return b.reasoning ?? deriveReasoning(b);
+}
+
+/** Execution + results; hand-authored if present, otherwise derived. */
+export function getResults(tenantIndex: number): ResultsData {
+  const bundle = bundleAt(tenantIndex);
+  if (bundle.results) return bundle.results;
+  const autoCh = bundle.channels.channels.filter((c) => c.auto).slice(0, 2);
+  return {
+    inFlight: autoCh.map((c, i) => ({
+      channel: c.n,
+      piece: bundle.briefing.slides.plan.pieces[i]?.title ?? "今週のコンテンツ",
+      status: i === 0 ? "publishing" : "scheduled",
+      when: i === 0 ? "本日 09:00" : "今週",
+      auto: true,
+    })),
+    weeks: bundle.strategyArchive.map((w, i) => ({
+      week: w.w,
+      reach: w.reach,
+      cv: w.st === "you" ? "—" : "資料DL・問い合わせ（推定）",
+      expectation: w.st === "you" ? "pending" : i === 2 ? "below" : "met",
+      note: w.st === "you" ? "承認待ち。承認後に配信を起動。" : "実行済み。週次結果は推定値。",
+    })),
+    daily: {
+      date: "本日 08:00",
+      lines: ["昨日の配信リーチが堅調に推移", "問い合わせ・保存などの反応を集計中", "次回ブリーフィング：来週月 06:00"],
+    },
+  };
 }

@@ -3,7 +3,7 @@
 import { getReasoning } from "@/lib/api";
 import { stageIsDownstream, traceToStage } from "@/data/product";
 import { useStore } from "@/state/store";
-import type { ReasoningStage, ReasoningTrace } from "@/data/types";
+import type { ReasoningStage, ReasoningTrace, ViewId } from "@/data/types";
 
 /**
  * Pillar 2 — the glass box. S1→S6 strategy-derivation stages as a horizontal
@@ -12,7 +12,7 @@ import type { ReasoningStage, ReasoningTrace } from "@/data/types";
  * "why is this output correct" is always traceable. (strategy-logic.md)
  */
 export function ReasoningGraph() {
-  const { tenant, traceKey, openStage, setOpenStage } = useStore();
+  const { tenant, traceKey, openStage, setOpenStage, setView } = useStore();
   const r = getReasoning(tenant);
   const tracedFrom = traceToStage(traceKey);
 
@@ -41,12 +41,14 @@ export function ReasoningGraph() {
         })}
       </div>
 
-      {openStage ? <StageDetail stage={r.stages.find((s) => s.id === openStage)!} r={r} /> : null}
+      {openStage ? (
+        <StageDetail stage={r.stages.find((s) => s.id === openStage)!} r={r} nav={setView} />
+      ) : null}
     </div>
   );
 }
 
-function StageDetail({ stage, r }: { stage: ReasoningStage; r: ReasoningTrace }) {
+function StageDetail({ stage, r, nav }: { stage: ReasoningStage; r: ReasoningTrace; nav: (v: ViewId) => void }) {
   return (
     <div className="rg-detail">
       <div className="rg-detail-grid">
@@ -66,6 +68,18 @@ function StageDetail({ stage, r }: { stage: ReasoningStage; r: ReasoningTrace })
       </div>
 
       <div className="rg-payload">{renderPayload(stage.id, r)}</div>
+
+      {stage.id === "s1" ? (
+        <div className="rg-jump">
+          <button onClick={() => nav("trends")}>トレンド・レーダーで詳しく ▸</button>
+          <button onClick={() => nav("knowledge")}>ブランドナレッジで前提を見る ▸</button>
+        </div>
+      ) : null}
+      {stage.id === "s5" ? (
+        <div className="rg-jump">
+          <button onClick={() => nav("rules")}>ブランド運用ルールを見る ▸</button>
+        </div>
+      ) : null}
     </div>
   );
 }

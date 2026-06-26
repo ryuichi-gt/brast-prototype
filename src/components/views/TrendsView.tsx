@@ -1,12 +1,13 @@
 "use client";
 
-import { getTrends } from "@/lib/api";
+import { getReasoning, getTrends } from "@/lib/api";
 import { useStore } from "@/state/store";
 
 /** Trend radar: live signals monitored in real time, feeding the strategy. */
 export function TrendsView() {
   const { tenant } = useStore();
   const { blips, cards } = getTrends(tenant);
+  const { scoredSignals, droppedSignals } = getReasoning(tenant);
 
   return (
     <div className="page">
@@ -47,6 +48,31 @@ export function TrendsView() {
           </div>
         </div>
       </div>
+
+      <div className="sectlabel">関連度の判定（S1）— なぜ関連／非関連か</div>
+      <p style={{ color: "var(--t-md)", fontSize: 12.5, margin: "0 0 14px", lineHeight: 1.65, maxWidth: "74ch" }}>
+        キーワード一致ではなく、ブランドの<b style={{ color: "var(--t-hi)" }}>概念境界</b>に照らして関連度を判定します。無関連を落とした理由まで開示するのが BRAST のグラスボックスです。
+      </p>
+      {scoredSignals.map((s) => (
+        <div className="relcard" key={s.id}>
+          <span className="relscore">{s.relevanceScore}</span>
+          <div className="relbody">
+            <div className="relh">{s.topic}</div>
+            <div className="relreason">関連の理由: {s.conceptMatchReason}</div>
+            <div className="relsrc mono">{s.sources.join(" · ")}</div>
+          </div>
+        </div>
+      ))}
+      <div className="sectlabel" style={{ marginTop: 18 }}>除外した無関連（概念境界の外）</div>
+      {droppedSignals.map((d, i) => (
+        <div className="relcard dropped" key={i}>
+          <span className="relx">除外</span>
+          <div className="relbody">
+            <div className="relh">{d.topic}</div>
+            <div className="relreason">{d.reason}</div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

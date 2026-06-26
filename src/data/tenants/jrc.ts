@@ -338,6 +338,30 @@ export const jrc: TenantBundle = {
     ],
   },
 
+  results: {
+    inFlight: [
+      { channel: "オウンドメディア", piece: "共有サービス解説（要点整理）", status: "publishing", when: "本日 09:00", auto: true },
+      { channel: "X", piece: "加算 早見表カード", status: "scheduled", when: "火 12:00", auto: true },
+      { channel: "オウンドメディア", piece: "レセボット実務", status: "scheduled", when: "水 09:00", auto: true },
+      { channel: "PR TIMES", piece: "共有サービス対応の体制を発表", status: "scheduled", when: "水（手動配信指示）", auto: false },
+    ],
+    weeks: [
+      { week: "今週 · 6/22週", reach: "~24k（想定）", cv: "—", expectation: "pending", note: "承認待ち。承認後に配信を起動。" },
+      { week: "6/15週", reach: "20k", cv: "問い合わせ 6 / 資料DL 28", expectation: "met", note: "レセボット記事が指名検索を押し上げ、期待値に到達。" },
+      { week: "6/8週", reach: "22k", cv: "問い合わせ 3 / 資料DL 17", expectation: "below", note: "セキュリティ解説のCVが想定未達。次週は実務チェックリストを前面に。" },
+      { week: "6/1週", reach: "19k", cv: "問い合わせ 5 / 資料DL 21", expectation: "met", note: "加算の取得支援テーマが好反応。" },
+    ],
+    daily: {
+      date: "本日 08:00",
+      lines: [
+        "昨日のオウンド記事「オンライン資格確認の解説」リーチ 1.2k（前日比 +14%）",
+        "X の早見表カードが保存・リポスト中心に伸長（保存 38）",
+        "問い合わせフォーム：医療DX推進体制整備加算に関する相談 1件",
+        "次回ブリーフィング：来週月 06:00（共有サービス本格運用の続報を反映予定）",
+      ],
+    },
+  },
+
   brandRules: {
     summary:
       "ブランドの憲法です。戦略・コンテンツ・外部からの修正指示は、すべてこのルールに照合されます（規範チェック S5）。各ルールはまずAIが提案し、あなたが承認・編集します。",

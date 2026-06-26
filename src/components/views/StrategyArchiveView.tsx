@@ -1,12 +1,16 @@
 "use client";
 
-import { getStrategyArchive } from "@/lib/api";
+import { getResults, getStrategyArchive } from "@/lib/api";
 import { useStore } from "@/state/store";
 
-/** Strategy archive: weekly strategy sheets stack up (executed / pending). */
+/** Strategy archive: weekly strategy sheets stack up, now with execution results. */
 export function StrategyArchiveView() {
   const { tenant } = useStore();
   const weeks = getStrategyArchive(tenant);
+  const results = getResults(tenant).weeks;
+  const resultFor = (w: string) => results.find((r) => r.week === w);
+  const expLabel = { met: "期待値 到達", below: "期待値 未達", pending: "実行待ち" } as const;
+  const expCls = { met: "live", below: "man", pending: "draft" } as const;
 
   return (
     <div className="page">
@@ -43,7 +47,19 @@ export function StrategyArchiveView() {
               <span>
                 リーチ <b style={{ color: "var(--t-hi)" }}>{x.reach}</b>
               </span>
+              {resultFor(x.w)?.cv && resultFor(x.w)!.cv !== "—" ? (
+                <span>
+                  CV <b style={{ color: "var(--t-hi)" }}>{resultFor(x.w)!.cv}</b>
+                </span>
+              ) : null}
             </div>
+            {resultFor(x.w) ? (
+              <div style={{ marginTop: 11 }}>
+                <span className={`statpill ${expCls[resultFor(x.w)!.expectation]}`}>
+                  {expLabel[resultFor(x.w)!.expectation]}
+                </span>
+              </div>
+            ) : null}
           </div>
         ))}
       </div>

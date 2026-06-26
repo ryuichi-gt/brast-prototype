@@ -275,6 +275,34 @@ export interface StrategyWeek {
   reach: string;
 }
 
+/* ---------- Pillar 3: Execution & Results (M8) ---------- */
+export interface DistributionItem {
+  channel: string;
+  piece: string;
+  status: "published" | "publishing" | "scheduled";
+  when: string;
+  auto: boolean;
+}
+
+export interface WeekResult {
+  week: string;
+  reach: string;
+  cv: string;
+  expectation: "met" | "below" | "pending";
+  note: string;
+}
+
+export interface DailyReport {
+  date: string;
+  lines: string[];
+}
+
+export interface ResultsData {
+  inFlight: DistributionItem[];
+  weeks: WeekResult[];
+  daily: DailyReport;
+}
+
 export interface RadarBlip {
   x: number;
   y: number;
@@ -392,6 +420,8 @@ export interface TenantBundle {
   articles?: Record<string, Article>;
   /** Pillar 1 — the brand "constitution" that governs everything (M5). */
   brandRules?: BrandRules;
+  /** Pillar 3 — execution status + weekly results (M8). */
+  results?: ResultsData;
 }
 
 /* ---------- Pillar 1: Brand Operating Rules (M5) ---------- */
