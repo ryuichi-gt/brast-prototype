@@ -2959,3 +2959,21 @@ button {
   color: var(--t-lo);
   margin-top: 5px;
 }
+
+/* M9 — responsive safety for v2 screens */
+@media (max-width: 920px) {
+  .rg-bar {
+    grid-template-columns: 64px 1fr 26px;
+  }
+  .rg-node {
+    margin-right: 18px;
+  }
+  .relcard {
+    grid-template-columns: 40px 1fr;
+    gap: 11px;
+  }
+  .art-bet-link,
+  .tracebtn {
+    font-size: 11px;
+  }
+}
